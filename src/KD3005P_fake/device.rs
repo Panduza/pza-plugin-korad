@@ -1,23 +1,9 @@
-use std::fmt::format;
-use std::sync::Arc;
-use std::time::Duration;
-
+use crate::common::identity;
 use async_trait::async_trait;
-
-use panduza_platform_core::spawn_on_command;
-use panduza_platform_core::BidirMsgAtt;
 use panduza_platform_core::DeviceLogger;
-use panduza_platform_core::Interface;
-use panduza_platform_core::StringCodec;
-use panduza_platform_core::StringListCodec;
-use panduza_platform_core::TaskResult;
 use panduza_platform_core::{Device, DeviceOperations, Error};
-use serde_json::json;
+use std::time::Duration;
 use tokio::time::sleep;
-
-static PICOHA_VENDOR_ID: u16 = 0x16c0;
-static PICOHA_PRODUCT_ID: u16 = 0x05e1;
-static PICOHA_SERIAL_BAUDRATE: u32 = 9600; // We do not care... it is USB serial
 
 ///
 /// Device to control PicoHA Dio Board
@@ -132,6 +118,47 @@ impl DeviceOperations for PicoHaDioDevice {
         //
         // Init logger
         self.logger = Some(device.logger.clone());
+
+        identity::mount_identity_fake(device.clone(), "FAKE - KD3005P").await;
+
+        // "identity" // IDN string
+
+        // "control" { // class
+        //     "output_enable" // OUT (boolean) control
+
+        //     "voltage": {// class - tag SI
+        //         "value" // VSET
+        //         "unit"  // String "V"
+        //     },
+        //     "current": {// class - tag SI
+        //         "value" // ISET
+        //         "unit"  // String "A"
+        //     },
+
+        //     "options": {// class
+        //         "ocp" // OCP (boolean) control
+        //         "ovp" // OVP (boolean) control
+        //         "beep" // BEEP (boolean)
+        //         "Lock" // status
+        //         "mode" { // class enum string
+        //             "choices" // ["C.C"] ["C.V"]
+        //             "value"  // string
+        //         },
+        //         "Tracking" // ????  there is a ref in the doc but...
+        //     }
+        // },
+        // "measure" { // class
+        //     "voltmeter" { // class - tag SI
+        //         "value" // VOUT
+        //         "unit"  // String "V"
+        //     },
+        //     "ampermeter" {// class - tag SI
+        //         "value" // IOUT
+        //         "unit"  // String "A"
+        //     }
+        // },
+
+        // KORAD KD3005P V6.8 SN:03471643
 
         // self.prepare_settings(device.clone()).await?;
         // self.mount_connector().await?;
