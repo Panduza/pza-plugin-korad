@@ -1,5 +1,6 @@
 use crate::common::identity;
 use async_trait::async_trait;
+use panduza_platform_connectors::SerialSettings;
 use panduza_platform_core::DeviceLogger;
 use panduza_platform_core::{Device, DeviceOperations, Error};
 use std::time::Duration;
@@ -8,14 +9,10 @@ use tokio::time::sleep;
 ///
 /// Device to control PicoHA Dio Board
 ///
-pub struct PicoHaDioDevice {
+pub struct KD3005PFakeDevice {
     ///
     /// Device logger
     logger: Option<DeviceLogger>,
-    // ///
-    // /// Serial settings to connect to the pico
-    // serial_settings: Option<SerialSettings>,
-
     // ///
     // /// Connector to communicate with the pico
     // connector: Option<Connector>,
@@ -25,14 +22,13 @@ pub struct PicoHaDioDevice {
     // pico_connector: Option<PicoHaDioConnector>,
 }
 
-impl PicoHaDioDevice {
+impl KD3005PFakeDevice {
     ///
     /// Constructor
     ///
     pub fn new() -> Self {
-        PicoHaDioDevice {
+        KD3005PFakeDevice {
             logger: None,
-            // serial_settings: None,
             // connector: None,
             // pico_connector: None,
         }
@@ -110,7 +106,7 @@ impl PicoHaDioDevice {
 }
 
 #[async_trait]
-impl DeviceOperations for PicoHaDioDevice {
+impl DeviceOperations for KD3005PFakeDevice {
     ///
     ///
     ///
