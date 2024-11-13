@@ -8,7 +8,11 @@ use tokio::sync::Mutex;
 ///
 ///
 ///
-pub async fn mount(mut device: Device, mut interface: Interface) -> Result<(), Error> {
+pub async fn mount(
+    mut device: Device,
+    mut interface: Interface,
+    driver: Arc<Mutex<KoradDriver>>,
+) -> Result<(), Error> {
     let s = EnumSettings::from(vec!["C.C", "C.V"]);
 
     //
