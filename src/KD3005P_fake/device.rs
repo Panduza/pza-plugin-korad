@@ -1,5 +1,8 @@
-use crate::common::identity;
+use crate::common::fake::control::mount_control;
+use crate::common::fake::identity::mount_identity;
+use crate::common::fake::measure::mount_measure;
 use async_trait::async_trait;
+
 use panduza_platform_core::DeviceLogger;
 use panduza_platform_core::{Device, DeviceOperations, Error};
 use std::time::Duration;
@@ -8,14 +11,10 @@ use tokio::time::sleep;
 ///
 /// Device to control PicoHA Dio Board
 ///
-pub struct PicoHaDioDevice {
+pub struct KD3005PFakeDevice {
     ///
     /// Device logger
     logger: Option<DeviceLogger>,
-    // ///
-    // /// Serial settings to connect to the pico
-    // serial_settings: Option<SerialSettings>,
-
     // ///
     // /// Connector to communicate with the pico
     // connector: Option<Connector>,
@@ -25,14 +24,13 @@ pub struct PicoHaDioDevice {
     // pico_connector: Option<PicoHaDioConnector>,
 }
 
-impl PicoHaDioDevice {
+impl KD3005PFakeDevice {
     ///
     /// Constructor
     ///
     pub fn new() -> Self {
-        PicoHaDioDevice {
+        KD3005PFakeDevice {
             logger: None,
-            // serial_settings: None,
             // connector: None,
             // pico_connector: None,
         }
@@ -110,7 +108,7 @@ impl PicoHaDioDevice {
 }
 
 #[async_trait]
-impl DeviceOperations for PicoHaDioDevice {
+impl DeviceOperations for KD3005PFakeDevice {
     ///
     ///
     ///
@@ -119,21 +117,14 @@ impl DeviceOperations for PicoHaDioDevice {
         // Init logger
         self.logger = Some(device.logger.clone());
 
-        identity::mount_identity_fake(device.clone(), "FAKE - KD3005P").await;
+        mount_identity(device.clone(), "FAKE - KD3005P").await;
+        mount_control(device.clone()).await?;
+        mount_measure(device.clone()).await?;
 
         // "identity" // IDN string
 
         // "control" { // class
         //     "output_enable" // OUT (boolean) control
-
-        //     "voltage": {// class - tag SI
-        //         "value" // VSET
-        //         "unit"  // String "V"
-        //     },
-        //     "current": {// class - tag SI
-        //         "value" // ISET
-        //         "unit"  // String "A"
-        //     },
 
         //     "options": {// class
         //         "ocp" // OCP (boolean) control
@@ -157,24 +148,6 @@ impl DeviceOperations for PicoHaDioDevice {
         //         "unit"  // String "A"
         //     }
         // },
-
-        // KORAD KD3005P V6.8 SN:03471643
-
-        // self.prepare_settings(device.clone()).await?;
-        // self.mount_connector().await?;
-
-        // self.create_io_interfaces(device.clone()).await?;
-
-        // self.pico_get_direction(2).await?;
-
-        // une interface pour chaque io_%d
-        //
-        // io_%d/direction              meta : enum
-        // io_%d/direction/choices      list of string
-        // io_%d/direction/value        string
-        // io_%d/value           (enum/string) set/get (when input cannot be set)
-        // io_%d/trigger_read    (boolean) start an input reading (oneshot)
-        //
 
         Ok(())
     }

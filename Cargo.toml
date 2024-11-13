@@ -14,6 +14,9 @@ panduza-platform-core = { git = "https://github.com/Panduza/panduza-platform-cor
     "log",
 ] }
 
+# The panduza core library
+panduza-platform-connectors = { git = "https://github.com/Panduza/panduza-platform-connectors", branch = "next_gen" }
+
 # The panduza connectors library
 # Main async framework for the platform
 tokio = { version = "1", features = ["full", "tracing"] }
