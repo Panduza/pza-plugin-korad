@@ -126,4 +126,56 @@ impl KoradDriver {
 
         Ok(())
     }
+
+    ///
+    ///
+    ///
+    pub async fn get_iout(&mut self) -> Result<f32, Error> {
+        let mut response: [u8; 512] = [0; 512];
+
+        let cmd = "IOUT1?\n".as_bytes();
+
+        let count = self
+            .driver
+            .write_then_read_until(cmd, &mut response, '\n' as u8)
+            .await
+            .map_err(|_e| Error::Wtf)?;
+
+        println!("{:?}", response[..count].to_vec());
+
+        let string_slice = String::from_utf8(response[..count - 1].to_vec()).unwrap();
+        let string = string_slice.to_string();
+
+        let value = string
+            .parse::<f32>()
+            .map_err(|e| Error::Generic(format!("{:?}", e)))?;
+
+        Ok(value)
+    }
+
+    ///
+    ///
+    ///
+    pub async fn get_vout(&mut self) -> Result<f32, Error> {
+        let mut response: [u8; 512] = [0; 512];
+
+        let cmd = "VOUT1?\n".as_bytes();
+
+        let count = self
+            .driver
+            .write_then_read_until(cmd, &mut response, '\n' as u8)
+            .await
+            .map_err(|_e| Error::Wtf)?;
+
+        println!("{:?}", response[..count].to_vec());
+
+        let string_slice = String::from_utf8(response[..count - 1].to_vec()).unwrap();
+        let string = string_slice.to_string();
+
+        let value = string
+            .parse::<f32>()
+            .map_err(|e| Error::Generic(format!("{:?}", e)))?;
+
+        Ok(value)
+    }
 }
