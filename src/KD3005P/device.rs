@@ -1,20 +1,15 @@
-use std::fmt::format;
 use std::sync::Arc;
 use std::time::Duration;
 
 use async_trait::async_trait;
 
+use crate::common::driver::KoradDriver;
 use panduza_platform_connectors::SerialSettings;
 use panduza_platform_connectors::UsbSettings;
-use panduza_platform_core::spawn_on_command;
-use panduza_platform_core::BidirMsgAtt;
 use panduza_platform_core::DeviceLogger;
-use panduza_platform_core::Interface;
-use panduza_platform_core::StringCodec;
-use panduza_platform_core::StringListCodec;
-use panduza_platform_core::TaskResult;
 use panduza_platform_core::{Device, DeviceOperations, Error};
 use serde_json::json;
+use tokio::sync::Mutex;
 use tokio::time::sleep;
 
 static DEVICE_VENDOR_ID: u16 = 0x0416;
@@ -84,43 +79,20 @@ impl KD3005PDevice {
         Ok(())
     }
 
-    // ///
-    // /// Try to mount the connector to reach the device
-    // ///
-    // pub async fn mount_connector(&mut self) -> Result<(), Error> {
-    //     //
-    //     // Recover settings
-    //     let settings = self.serial_settings.as_ref().ok_or(Error::BadSettings(
-    //         "Serial Settings not provided".to_string(),
-    //     ))?;
-    //     //
-    //     // Try to get connector
-    //     self.connector = Some(
-    //         get_connector(settings)
-    //             .await
-    //             .map_err(|e| Error::Generic(e.to_string()))?,
-    //     );
-    //     //
-    //     // Try to init it
-    //     self.connector
-    //         .as_ref()
-    //         .ok_or(Error::BadSettings(
-    //             "Connector is not initialized".to_string(),
-    //         ))?
-    //         .lock()
-    //         .await
-    //         .init()
-    //         .await
-    //         .map_err(|e| Error::Generic(e.to_string()))?;
+    ///
+    /// Try to mount the connector to reach the device
+    ///
+    pub fn mount_driver(&mut self) -> Result<Arc<Mutex<KoradDriver>>, Error> {
+        //
+        // Recover settings
+        let settings = self.serial_settings.as_ref().ok_or(Error::BadSettings(
+            "Serial Settings not provided".to_string(),
+        ))?;
 
-    //     //
-    //     self.pico_connector = Some(PicoHaDioConnector::new(
-    //         self.logger.as_ref().unwrap().clone(),
-    //         self.connector.as_ref().unwrap().clone(),
-    //     ));
+        let driver = KoradDriver::open(settings)?;
 
-    //     Ok(())
-    // }
+        Ok(Arc::new(Mutex::new(driver)))
+    }
 }
 
 #[async_trait]
@@ -136,6 +108,10 @@ impl DeviceOperations for KD3005PDevice {
         //
         //
         self.prepare_settings(device.clone()).await?;
+
+        let driver = self.mount_driver()?;
+
+        crate::common::real::identity::mount(device.clone(), driver).await;
 
         //
         //
