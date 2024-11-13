@@ -16,6 +16,7 @@ pub async fn mount(mut device: Device, driver: Arc<Mutex<KoradDriver>>) -> Resul
 
     // mount_voltage(device.clone(), itf_control.clone()).await?;
     current::mount(device.clone(), itf_control.clone(), driver.clone()).await?;
+    voltage::mount(device.clone(), itf_control.clone(), driver.clone()).await?;
 
     // mount_options(device.clone(), itf_control.clone()).await?;
 

@@ -1,7 +1,7 @@
 panduza_platform_core::plugin_interface!("korad");
 
-mod KA3005P;
 pub mod common;
+mod ka3005p;
 mod kd3005p;
 mod kd3005p_fake;
 
@@ -9,7 +9,7 @@ mod kd3005p_fake;
 //
 pub fn plugin_producers() -> Vec<Box<dyn Producer>> {
     let mut producers: Vec<Box<dyn Producer>> = vec![];
-    producers.push(KA3005P::producer::KA3005P::new());
+    producers.push(ka3005p::producer::KA3005P::new());
     producers.push(kd3005p::producer::KD3005P::new());
     producers.push(kd3005p_fake::producer::KD3005P_fake::new());
     return producers;

@@ -111,8 +111,8 @@ impl DeviceOperations for KD3005PDevice {
 
         let driver = self.mount_driver()?;
 
-        crate::common::real::identity::mount(device.clone(), driver.clone()).await;
-        crate::common::real::control::mount(device.clone(), driver.clone()).await;
+        crate::common::real::identity::mount(device.clone(), driver.clone()).await?;
+        crate::common::real::control::mount(device.clone(), driver.clone()).await?;
 
         Ok(())
     }
