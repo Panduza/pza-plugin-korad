@@ -111,24 +111,8 @@ impl DeviceOperations for KD3005PDevice {
 
         let driver = self.mount_driver()?;
 
-        crate::common::real::identity::mount(device.clone(), driver).await;
-
-        //
-        //
-        // self.mount_connector().await?;
-
-        // self.create_io_interfaces(device.clone()).await?;
-
-        // self.pico_get_direction(2).await?;
-
-        // une interface pour chaque io_%d
-        //
-        // io_%d/direction              meta : enum
-        // io_%d/direction/choices      list of string
-        // io_%d/direction/value        string
-        // io_%d/value           (enum/string) set/get (when input cannot be set)
-        // io_%d/trigger_read    (boolean) start an input reading (oneshot)
-        //
+        crate::common::real::identity::mount(device.clone(), driver.clone()).await;
+        crate::common::real::control::mount(device.clone(), driver.clone()).await;
 
         Ok(())
     }

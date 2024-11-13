@@ -1,12 +1,19 @@
+use crate::common::driver::KoradDriver;
 use panduza_platform_core::Error;
 use panduza_platform_core::{
     spawn_on_command, BidirMsgAtt, Device, DeviceLogger, Interface, SiCodec, SiSettings,
 };
+use std::sync::Arc;
+use tokio::sync::Mutex;
 
 ///
 ///
 ///
-pub async fn mount_current(mut device: Device, mut interface: Interface) -> Result<(), Error> {
+pub async fn mount(
+    mut device: Device,
+    mut interface: Interface,
+    driver: Arc<Mutex<KoradDriver>>,
+) -> Result<(), Error> {
     let settings = SiSettings::new("V", 0, 30);
 
     //
@@ -19,7 +26,8 @@ pub async fn mount_current(mut device: Device, mut interface: Interface) -> Resu
         .finish_with_codec::<SiCodec>()
         .await;
 
-    att_current.set(5).await.unwrap();
+    let v = driver.lock().await.get_iset().await?;
+    att_current.set(v).await.unwrap();
 
     //
     // Execute action on each command received
@@ -31,6 +39,7 @@ pub async fn mount_current(mut device: Device, mut interface: Interface) -> Resu
         on_command(
             logger_for_cmd_event.clone(),
             att_current_for_cmd_event.clone(),
+            driver.clone()
         )
     );
 
@@ -45,11 +54,14 @@ pub async fn mount_current(mut device: Device, mut interface: Interface) -> Resu
 async fn on_command(
     logger: DeviceLogger,
     mut value_value_attr: BidirMsgAtt<SiCodec>,
+    driver: Arc<Mutex<KoradDriver>>,
 ) -> Result<(), Error> {
     while let Some(command) = value_value_attr.pop_cmd().await {
         //
         // Log
         logger.debug(format!("SI current command received '{:?}'", command));
+
+        // driver.lock().await.set_iset(command.into());
 
         value_value_attr.set(command).await?;
 

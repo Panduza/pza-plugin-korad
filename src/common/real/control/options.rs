@@ -3,8 +3,10 @@ mod lock;
 mod mode;
 mod ocp;
 mod ovp;
-
+use crate::common::driver::KoradDriver;
 use panduza_platform_core::{Device, Error, Interface};
+use std::sync::Arc;
+use tokio::sync::Mutex;
 
 ///
 ///

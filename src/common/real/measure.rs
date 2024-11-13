@@ -1,9 +1,11 @@
 mod ampermeter;
 mod voltmeter;
 
-use panduza_platform_core::{Device, Error};
-
+use crate::common::driver::KoradDriver;
 use ampermeter::mount_ampermeter;
+use panduza_platform_core::{Device, Error};
+use std::sync::Arc;
+use tokio::sync::Mutex;
 use voltmeter::mount_voltmeter;
 
 ///
