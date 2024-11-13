@@ -5,6 +5,7 @@ mod voltage;
 use panduza_platform_core::{Device, Error};
 
 use current::mount_current;
+use options::mount_options;
 use voltage::mount_voltage;
 
 ///
@@ -17,6 +18,7 @@ pub async fn mount_control(mut device: Device) -> Result<(), Error> {
 
     mount_voltage(device.clone(), itf_control.clone()).await?;
     mount_current(device.clone(), itf_control.clone()).await?;
+    mount_options(device.clone(), itf_control.clone()).await?;
 
     Ok(())
 }

@@ -1,11 +1,10 @@
-// mod current;
-// mod options;
-// mod voltage;
+mod ampermeter;
+mod voltmeter;
 
 use panduza_platform_core::{Device, Error};
 
-// use current::mount_current;
-// use voltage::mount_voltage;
+use ampermeter::mount_ampermeter;
+use voltmeter::mount_voltmeter;
 
 ///
 ///
@@ -15,8 +14,8 @@ pub async fn mount_measure(mut device: Device) -> Result<(), Error> {
     // Create attribute
     let itf_measure = device.create_interface("measure").finish();
 
-    // mount_voltage(device.clone(), itf_control.clone()).await?;
-    // mount_current(device.clone(), itf_control.clone()).await?;
+    mount_ampermeter(device.clone(), itf_measure.clone()).await?;
+    mount_voltmeter(device.clone(), itf_measure.clone()).await?;
 
     Ok(())
 }
