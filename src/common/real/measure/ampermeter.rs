@@ -6,13 +6,13 @@ use panduza_platform_core::{
 ///
 ///
 ///
-pub async fn mount_voltmeter(mut device: Device, mut interface: Interface) -> Result<(), Error> {
-    let settings = SiSettings::new("V", 0, 30);
+pub async fn mount_ampermeter(mut device: Device, mut interface: Interface) -> Result<(), Error> {
+    let settings = SiSettings::new("A", 0, 30);
 
     //
     //
     let att_current = interface
-        .create_attribute("voltmeter")
+        .create_attribute("ampermeter")
         .with_settings(settings.into())
         .message()
         .with_att_only_access()

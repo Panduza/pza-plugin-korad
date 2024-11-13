@@ -1,4 +1,4 @@
-use super::device::PicoHaDioDevice;
+use super::device::KA3005PDevice;
 use panduza_platform_core::{DeviceOperations, Producer};
 
 pub struct KA3005P {}
@@ -19,6 +19,6 @@ impl Producer for KA3005P {
     }
 
     fn produce(&self) -> Result<Box<dyn DeviceOperations>, panduza_platform_core::Error> {
-        return Ok(Box::new(PicoHaDioDevice::new()));
+        return Ok(Box::new(KA3005PDevice::new()));
     }
 }
