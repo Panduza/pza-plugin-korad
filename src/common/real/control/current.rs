@@ -27,7 +27,7 @@ pub async fn mount(
         .await;
 
     let v = driver.lock().await.get_iset().await?;
-    att_current.set(v).await.unwrap();
+    att_current.set(SiCodec::from_f32(v, 3)).await.unwrap();
 
     //
     // Execute action on each command received
@@ -61,19 +61,10 @@ async fn on_command(
         // Log
         logger.debug(format!("SI current command received '{:?}'", command));
 
-        // driver.lock().await.set_iset(command.into());
+        let v = command.into_f32()?;
+        driver.lock().await.set_iset(v).await?;
 
         value_value_attr.set(command).await?;
-
-        // if command.value == "0".to_string() {
-        //     // connector.pico_set_bus_id(0).await?;
-
-        // } else if command.value == "1".to_string() {
-        //     // connector.pico_set_bus_id(1).await?;
-        //     value_value_attr.set("1".to_string()).await?;
-        // } else {
-        //     logger.error(format!("BAD BUS ID !!!! {:?}", command.value));
-        // }
     }
     Ok(())
 }
