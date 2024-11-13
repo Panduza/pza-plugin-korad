@@ -1,22 +1,24 @@
 use panduza_platform_core::Error;
 use panduza_platform_core::{
-    spawn_on_command, BidirMsgAtt, BooleanCodec, Device, DeviceLogger, Interface,
+    spawn_on_command, BidirMsgAtt, Device, DeviceLogger, EnumCodec, EnumSettings, Interface,
 };
 
 ///
 ///
 ///
 pub async fn mount(mut device: Device, mut interface: Interface) -> Result<(), Error> {
+    let s = EnumSettings::from(vec!["C.C", "C.V"]);
+
     //
     //
     let att_voltage = interface
-        .create_attribute("lock")
+        .create_attribute("mode")
         .message()
         .with_bidir_access()
-        .finish_with_codec::<BooleanCodec>()
+        .finish_with_codec::<EnumCodec>()
         .await;
 
-    att_voltage.set(false).await.unwrap();
+    att_voltage.set("C.C").await.unwrap();
 
     //
     // Execute action on each command received
@@ -41,7 +43,7 @@ pub async fn mount(mut device: Device, mut interface: Interface) -> Result<(), E
 ///
 async fn on_command(
     logger: DeviceLogger,
-    mut value_value_attr: BidirMsgAtt<BooleanCodec>,
+    mut value_value_attr: BidirMsgAtt<EnumCodec>,
 ) -> Result<(), Error> {
     while let Some(command) = value_value_attr.pop_cmd().await {
         //

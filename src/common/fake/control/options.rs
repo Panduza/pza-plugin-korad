@@ -18,6 +18,7 @@ pub async fn mount_options(mut device: Device, mut interface: Interface) -> Resu
     ocp::mount(device.clone(), itf_options.clone()).await?;
     beep::mount(device.clone(), itf_options.clone()).await?;
     lock::mount(device.clone(), itf_options.clone()).await?;
+    mode::mount(device.clone(), itf_options.clone()).await?;
 
     Ok(())
 }
