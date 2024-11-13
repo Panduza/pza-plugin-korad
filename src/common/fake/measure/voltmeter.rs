@@ -12,7 +12,7 @@ pub async fn mount_voltmeter(mut device: Device, mut interface: Interface) -> Re
     //
     //
     let att_current = interface
-        .create_attribute("ampermeter")
+        .create_attribute("voltmeter")
         .with_settings(settings.into())
         .message()
         .with_att_only_access()
