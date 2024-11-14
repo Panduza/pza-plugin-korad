@@ -19,7 +19,8 @@ impl KoradDriver {
     pub async fn get_idn(&mut self) -> Result<String, Error> {
         let mut response: [u8; 512] = [0; 512];
 
-        let cmd = "*IDN?\n".as_bytes();
+        // let cmd = "*IDN?\n".as_bytes();
+        let cmd = "*IDN?".as_bytes();
 
         let count = self
             .driver
@@ -41,7 +42,8 @@ impl KoradDriver {
     pub async fn get_iset(&mut self) -> Result<f32, Error> {
         let mut response: [u8; 512] = [0; 512];
 
-        let cmd = "ISET1?\n".as_bytes();
+        // let cmd = "ISET1?\n".as_bytes();
+        let cmd = "ISET1?".as_bytes();
 
         let count = self
             .driver
@@ -66,7 +68,8 @@ impl KoradDriver {
     pub async fn set_iset(&mut self, value: f32) -> Result<(), Error> {
         // let mut response: [u8; 512] = [0; 512];
 
-        let pp = format!("ISET1:{:.3}\n", value);
+        // let pp = format!("ISET1:{:.3}\n", value);
+        let pp = format!("ISET1:{:.3}", value);
         let cmd = pp.as_str().as_bytes();
 
         // println!("cmd -> {:?}", cmd);
@@ -82,7 +85,8 @@ impl KoradDriver {
     pub async fn get_vset(&mut self) -> Result<f32, Error> {
         let mut response: [u8; 512] = [0; 512];
 
-        let cmd = "VSET1?\n".as_bytes();
+        // let cmd = "VSET1?\n".as_bytes();
+        let cmd = "VSET1?".as_bytes();
 
         let count = self
             .driver
@@ -107,7 +111,8 @@ impl KoradDriver {
     pub async fn set_vset(&mut self, value: f32) -> Result<(), Error> {
         // let mut response: [u8; 512] = [0; 512];
 
-        let pp = format!("VSET1:{:.2}\n", value);
+        // let pp = format!("VSET1:{:.2}\n", value);
+        let pp = format!("VSET1:{:.2}", value);
         let cmd = pp.as_str().as_bytes();
 
         // println!("cmd -> {:?}", cmd);
@@ -127,7 +132,8 @@ impl KoradDriver {
     pub async fn get_iout(&mut self) -> Result<f32, Error> {
         let mut response: [u8; 512] = [0; 512];
 
-        let cmd = "IOUT1?\n".as_bytes();
+        // let cmd = "IOUT1?\n".as_bytes();
+        let cmd = "IOUT1?".as_bytes();
 
         let count = self
             .driver
@@ -153,7 +159,8 @@ impl KoradDriver {
     pub async fn get_vout(&mut self) -> Result<f32, Error> {
         let mut response: [u8; 512] = [0; 512];
 
-        let cmd = "VOUT1?\n".as_bytes();
+        // let cmd = "VOUT1?\n".as_bytes();
+        let cmd = "VOUT1?".as_bytes();
 
         let count = self
             .driver
