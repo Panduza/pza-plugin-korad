@@ -1,12 +1,15 @@
 use crate::common::driver::KoradDriver;
-use panduza_platform_core::{Device, Error, StringCodec};
+use panduza_platform_core::{drivers::serial::SerialDriver, Device, Error, StringCodec};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
 ///
 ///
 ///
-pub async fn mount(mut device: Device, driver: Arc<Mutex<KoradDriver>>) -> Result<(), Error> {
+pub async fn mount<SD: SerialDriver>(
+    mut device: Device,
+    driver: Arc<Mutex<KoradDriver<SD>>>,
+) -> Result<(), Error> {
     //
     // Create attribute
     let att_identity = device

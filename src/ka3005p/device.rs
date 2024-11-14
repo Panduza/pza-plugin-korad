@@ -78,20 +78,20 @@ impl KA3005PDevice {
         Ok(())
     }
 
-    ///
-    /// Try to mount the connector to reach the device
-    ///
-    pub fn mount_driver(&mut self) -> Result<Arc<Mutex<KoradDriver>>, Error> {
-        //
-        // Recover settings
-        let settings = self.serial_settings.as_ref().ok_or(Error::BadSettings(
-            "Serial Settings not provided".to_string(),
-        ))?;
+    // /
+    // / Try to mount the connector to reach the device
+    // /
+    // pub fn mount_driver(&mut self) -> Result<Arc<Mutex<KoradDriver>>, Error> {
+    //     //
+    //     // Recover settings
+    //     let settings = self.serial_settings.as_ref().ok_or(Error::BadSettings(
+    //         "Serial Settings not provided".to_string(),
+    //     ))?;
 
-        let driver = KoradDriver::open(settings)?;
+    //     let driver = KoradDriver::open(settings)?;
 
-        Ok(Arc::new(Mutex::new(driver)))
-    }
+    //     Ok(Arc::new(Mutex::new(driver)))
+    // }
 }
 
 #[async_trait]
@@ -108,10 +108,10 @@ impl DeviceOperations for KA3005PDevice {
         //
         self.prepare_settings(device.clone()).await?;
 
-        let driver = self.mount_driver()?;
+        // let driver = self.mount_driver()?;
 
-        crate::common::real::identity::mount(device.clone(), driver.clone()).await?;
-        crate::common::real::control::mount(device.clone(), driver.clone()).await?;
+        // crate::common::real::identity::mount(device.clone(), driver.clone()).await?;
+        // crate::common::real::control::mount(device.clone(), driver.clone()).await?;
 
         Ok(())
     }

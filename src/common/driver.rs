@@ -1,19 +1,20 @@
-use panduza_platform_core::drivers::serial::generic::Driver as SerialDriver;
+use panduza_platform_core::drivers::serial::SerialDriver;
 use panduza_platform_core::drivers::serial::Settings as SerialSettings;
 use panduza_platform_core::Error;
 
 ///
 ///
 ///
-pub struct KoradDriver {
-    driver: SerialDriver,
+pub struct KoradDriver<SD> {
+    driver: SD,
 }
 
-impl KoradDriver {
-    pub fn open(settings: &SerialSettings) -> Result<Self, Error> {
-        let driver = SerialDriver::open(settings).map_err(|_| Error::Wtf)?;
-
-        Ok(Self { driver: driver })
+impl<SD: SerialDriver> KoradDriver<SD> {
+    ///
+    ///
+    ///
+    pub fn new(driver: SD) -> Self {
+        Self { driver: driver }
     }
 
     pub async fn get_idn(&mut self) -> Result<String, Error> {
@@ -22,10 +23,7 @@ impl KoradDriver {
         // let cmd = "*IDN?\n".as_bytes();
         let cmd = "*IDN?".as_bytes();
 
-        let count = self
-            .driver
-            .write_then_read_until(cmd, &mut response, '\n' as u8)
-            .await?;
+        let count = self.driver.write_then_read(cmd, &mut response).await?;
 
         println!("{:?}", response[..count].to_vec());
 
@@ -45,10 +43,7 @@ impl KoradDriver {
         // let cmd = "ISET1?\n".as_bytes();
         let cmd = "ISET1?".as_bytes();
 
-        let count = self
-            .driver
-            .write_then_read_until(cmd, &mut response, '\n' as u8)
-            .await?;
+        let count = self.driver.write_then_read(cmd, &mut response).await?;
 
         println!("{:?}", response[..count].to_vec());
 
@@ -74,7 +69,7 @@ impl KoradDriver {
 
         // println!("cmd -> {:?}", cmd);
 
-        let _count = self.driver.write_time_locked(cmd).await?;
+        let _count = self.driver.write(cmd).await?;
 
         Ok(())
     }
@@ -88,10 +83,7 @@ impl KoradDriver {
         // let cmd = "VSET1?\n".as_bytes();
         let cmd = "VSET1?".as_bytes();
 
-        let count = self
-            .driver
-            .write_then_read_until(cmd, &mut response, '\n' as u8)
-            .await?;
+        let count = self.driver.write_then_read(cmd, &mut response).await?;
 
         println!("{:?}", response[..count].to_vec());
 
@@ -117,11 +109,7 @@ impl KoradDriver {
 
         // println!("cmd -> {:?}", cmd);
 
-        let _count = self
-            .driver
-            .write_time_locked(cmd)
-            .await
-            .map_err(|_e| Error::Wtf)?;
+        let _count = self.driver.write(cmd).await.map_err(|_e| Error::Wtf)?;
 
         Ok(())
     }
@@ -137,7 +125,7 @@ impl KoradDriver {
 
         let count = self
             .driver
-            .write_then_read_until(cmd, &mut response, '\n' as u8)
+            .write_then_read(cmd, &mut response)
             .await
             .map_err(|_e| Error::Wtf)?;
 
@@ -164,7 +152,7 @@ impl KoradDriver {
 
         let count = self
             .driver
-            .write_then_read_until(cmd, &mut response, '\n' as u8)
+            .write_then_read(cmd, &mut response)
             .await
             .map_err(|_e| Error::Wtf)?;
 

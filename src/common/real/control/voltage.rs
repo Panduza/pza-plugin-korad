@@ -1,4 +1,5 @@
 use crate::common::driver::KoradDriver;
+use panduza_platform_core::drivers::serial::SerialDriver;
 use panduza_platform_core::Error;
 use panduza_platform_core::{
     spawn_on_command, BidirMsgAtt, Device, DeviceLogger, Interface, SiCodec, SiSettings,
@@ -8,10 +9,10 @@ use tokio::sync::Mutex;
 ///
 ///
 ///
-pub async fn mount(
+pub async fn mount<SD: SerialDriver>(
     mut device: Device,
     mut interface: Interface,
-    driver: Arc<Mutex<KoradDriver>>,
+    driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {
     let settings = SiSettings::new("V", 0, 30);
 
@@ -50,10 +51,10 @@ pub async fn mount(
 ///
 ///
 ///
-async fn on_command(
+async fn on_command<SD: SerialDriver>(
     logger: DeviceLogger,
     mut value_value_attr: BidirMsgAtt<SiCodec>,
-    driver: Arc<Mutex<KoradDriver>>,
+    driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {
     while let Some(command) = value_value_attr.pop_cmd().await {
         //

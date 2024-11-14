@@ -1,4 +1,5 @@
 use crate::common::driver::KoradDriver;
+use panduza_platform_core::drivers::serial::SerialDriver;
 use panduza_platform_core::Error;
 use panduza_platform_core::{
     spawn_on_command, BidirMsgAtt, BooleanCodec, Device, DeviceLogger, Interface,
@@ -8,10 +9,10 @@ use tokio::sync::Mutex;
 ///
 ///
 ///
-pub async fn mount(
+pub async fn mount<SD: SerialDriver>(
     mut device: Device,
     mut interface: Interface,
-    driver: Arc<Mutex<KoradDriver>>,
+    driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {
     //
     //

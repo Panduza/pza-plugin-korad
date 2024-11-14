@@ -4,6 +4,7 @@ use std::time::Duration;
 use async_trait::async_trait;
 
 use crate::common::driver::KoradDriver;
+use panduza_platform_core::drivers::serial::eol::Driver as SerialEolDriver;
 use panduza_platform_core::drivers::serial::Settings as SerialSettings;
 use panduza_platform_core::drivers::usb::Settings as UsbSettings;
 use panduza_platform_core::DeviceLogger;
@@ -82,16 +83,18 @@ impl KD3005PDevice {
     ///
     /// Try to mount the connector to reach the device
     ///
-    pub fn mount_driver(&mut self) -> Result<Arc<Mutex<KoradDriver>>, Error> {
+    pub fn mount_driver(&mut self) -> Result<Arc<Mutex<KoradDriver<SerialEolDriver>>>, Error> {
         //
         // Recover settings
         let settings = self.serial_settings.as_ref().ok_or(Error::BadSettings(
             "Serial Settings not provided".to_string(),
         ))?;
 
-        let driver = KoradDriver::open(settings)?;
+        let driver = SerialEolDriver::open(settings, vec![b'\n'])?;
 
-        Ok(Arc::new(Mutex::new(driver)))
+        let kdriver = KoradDriver::new(driver);
+
+        Ok(Arc::new(Mutex::new(kdriver)))
     }
 }
 
