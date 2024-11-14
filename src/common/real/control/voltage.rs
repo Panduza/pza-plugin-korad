@@ -25,7 +25,7 @@ pub async fn mount(
         .finish_with_codec::<SiCodec>()
         .await;
 
-    let v = driver.lock().await.get_iset().await?;
+    let v = driver.lock().await.get_vset().await?;
     att_voltage.set(SiCodec::from_f32(v, 2)).await.unwrap();
 
     //
@@ -61,7 +61,7 @@ async fn on_command(
         logger.debug(format!("SI voltage command received '{:?}'", command));
 
         let v = command.into_f32()?;
-        driver.lock().await.set_iset(v).await?;
+        driver.lock().await.set_vset(v).await?;
 
         value_value_attr.set(command).await?;
     }
