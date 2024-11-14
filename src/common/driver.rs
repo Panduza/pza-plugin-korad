@@ -1,4 +1,5 @@
-use panduza_platform_connectors::{serial::generic::Driver as SerialDriver, SerialSettings};
+use panduza_platform_core::drivers::serial::generic::Driver as SerialDriver;
+use panduza_platform_core::drivers::serial::Settings as SerialSettings;
 use panduza_platform_core::Error;
 
 ///
@@ -23,8 +24,7 @@ impl KoradDriver {
         let count = self
             .driver
             .write_then_read_until(cmd, &mut response, '\n' as u8)
-            .await
-            .map_err(|e| Error::Wtf)?;
+            .await?;
 
         println!("{:?}", response[..count].to_vec());
 
@@ -46,8 +46,7 @@ impl KoradDriver {
         let count = self
             .driver
             .write_then_read_until(cmd, &mut response, '\n' as u8)
-            .await
-            .map_err(|_| Error::Wtf)?;
+            .await?;
 
         println!("{:?}", response[..count].to_vec());
 
@@ -72,11 +71,7 @@ impl KoradDriver {
 
         // println!("cmd -> {:?}", cmd);
 
-        let _count = self
-            .driver
-            .write_time_locked(cmd)
-            .await
-            .map_err(|_| Error::Wtf)?;
+        let _count = self.driver.write_time_locked(cmd).await?;
 
         Ok(())
     }
@@ -92,8 +87,7 @@ impl KoradDriver {
         let count = self
             .driver
             .write_then_read_until(cmd, &mut response, '\n' as u8)
-            .await
-            .map_err(|_e| Error::Wtf)?;
+            .await?;
 
         println!("{:?}", response[..count].to_vec());
 

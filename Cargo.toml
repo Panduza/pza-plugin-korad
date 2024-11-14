@@ -12,10 +12,8 @@ crate-type = ["cdylib"]
 # The panduza core library
 panduza-platform-core = { git = "https://github.com/Panduza/panduza-platform-core", branch = "next_gen", features = [
     "log",
+    "serial",
 ] }
-
-# The panduza core library
-panduza-platform-connectors = { git = "https://github.com/Panduza/panduza-platform-connectors", branch = "next_gen" }
 
 # The panduza connectors library
 # Main async framework for the platform

@@ -1,7 +1,7 @@
 use crate::common::driver::KoradDriver;
 use async_trait::async_trait;
-use panduza_platform_connectors::SerialSettings;
-use panduza_platform_connectors::UsbSettings;
+use panduza_platform_core::drivers::serial::Settings as SerialSettings;
+use panduza_platform_core::drivers::usb::Settings as UsbSettings;
 use panduza_platform_core::DeviceLogger;
 use panduza_platform_core::{Device, DeviceOperations, Error};
 use serde_json::json;
@@ -71,7 +71,8 @@ impl KA3005PDevice {
             SerialSettings::new()
                 .set_port_name_from_json_or_usb_settings(&json_settings, &usb_settings)
                 .map_err(|e| Error::Generic(e.to_string()))?
-                .set_baudrate(DEVICE_SERIAL_BAUDRATE),
+                .set_baudrate(DEVICE_SERIAL_BAUDRATE)
+                .set_time_lock_duration(Duration::from_millis(300)), // require delay between 2 commands
         );
 
         Ok(())
