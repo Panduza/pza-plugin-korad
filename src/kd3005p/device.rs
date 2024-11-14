@@ -73,8 +73,7 @@ impl KD3005PDevice {
             SerialSettings::new()
                 .set_port_name_from_json_or_usb_settings(&json_settings, &usb_settings)
                 .map_err(|e| Error::Generic(e.to_string()))?
-                .set_baudrate(DEVICE_SERIAL_BAUDRATE)
-                .set_time_lock_duration(Duration::from_millis(5000)), // require delay between 2 commands
+                .set_baudrate(DEVICE_SERIAL_BAUDRATE), // .set_time_lock_duration(Duration::from_millis(5000)), // require delay between 2 commands
         );
 
         Ok(())
