@@ -1,3 +1,40 @@
-pub mod control;
-pub mod identity;
-pub mod measure;
+use async_trait::async_trait;
+use panduza_platform_core::{protocol::CommandResponseProtocol, Error};
+
+///
+///
+pub struct Driver {}
+
+impl Driver {
+    /// Create a new instance of the driver
+    ///
+    pub fn open() -> Result<Self, Error> {
+        Ok(Self {})
+    }
+}
+
+#[async_trait]
+impl CommandResponseProtocol for Driver {
+    ///
+    ///
+    ///
+    async fn send(&mut self, _command: &String) -> Result<(), Error> {
+        Ok(())
+    }
+
+    ///
+    ///
+    ///
+    async fn ask(&mut self, command: &String) -> Result<String, Error> {
+        //
+        //
+        if *command == "*IDN".to_string() {
+            return Ok("Fake Device !!!".to_string());
+        }
+        if *command == "VOUT1".to_string() {
+            return Ok("2.0".to_string());
+        }
+
+        return Ok("".to_string());
+    }
+}

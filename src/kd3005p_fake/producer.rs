@@ -1,15 +1,15 @@
 use super::device::KD3005PFakeDevice;
 use panduza_platform_core::{DeviceOperations, Producer};
 
-pub struct KD3005P_fake {}
+pub struct Kd3005pFake {}
 
-impl KD3005P_fake {
-    pub fn new() -> Box<KD3005P_fake> {
-        Box::new(KD3005P_fake {})
+impl Kd3005pFake {
+    pub fn new() -> Box<Kd3005pFake> {
+        Box::new(Kd3005pFake {})
     }
 }
 
-impl Producer for KD3005P_fake {
+impl Producer for Kd3005pFake {
     fn manufacturer(&self) -> String {
         "korad".to_string()
     }

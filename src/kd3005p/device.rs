@@ -122,7 +122,7 @@ impl DeviceOperations for KD3005PDevice {
     ///
     /// Easiest way to implement the reboot event
     ///
-    async fn wait_reboot_event(&mut self, device: Device) {
+    async fn wait_reboot_event(&mut self, _device: Device) {
         sleep(Duration::from_secs(5)).await;
     }
 }
