@@ -103,7 +103,7 @@ impl DeviceOperations for KD3005PDevice {
     ///
     ///
     ///
-    async fn mount(&mut self, mut device: Device) -> Result<(), Error> {
+    async fn mount(&mut self, device: Device) -> Result<(), Error> {
         //
         // Init logger
         self.logger = Some(device.logger.clone());
@@ -122,7 +122,7 @@ impl DeviceOperations for KD3005PDevice {
     ///
     /// Easiest way to implement the reboot event
     ///
-    async fn wait_reboot_event(&mut self, mut device: Device) {
+    async fn wait_reboot_event(&mut self, device: Device) {
         sleep(Duration::from_secs(5)).await;
     }
 }

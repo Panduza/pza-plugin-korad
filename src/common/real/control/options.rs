@@ -4,15 +4,15 @@ mod mode;
 mod ocp;
 mod ovp;
 use crate::common::driver::KoradDriver;
-use panduza_platform_core::{drivers::serial::SerialDriver, Device, Error, Interface};
+use panduza_platform_core::{protocol::CommandResponseProtocol, Device, Error, Interface};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
 ///
 ///
 ///
-pub async fn mount_options<SD: SerialDriver>(
-    mut device: Device,
+pub async fn mount<SD: CommandResponseProtocol>(
+    device: Device,
     mut interface: Interface,
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {

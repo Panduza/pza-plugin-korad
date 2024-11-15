@@ -2,14 +2,14 @@ mod current;
 mod options;
 mod voltage;
 use crate::common::driver::KoradDriver;
-use panduza_platform_core::{drivers::serial::SerialDriver, Device, Error};
+use panduza_platform_core::{protocol::CommandResponseProtocol, Device, Error};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
 ///
 ///
 ///
-pub async fn mount<SD: SerialDriver>(
+pub async fn mount<SD: CommandResponseProtocol + 'static>(
     mut device: Device,
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {

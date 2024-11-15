@@ -7,7 +7,7 @@ use panduza_platform_core::{
 ///
 ///
 pub async fn mount_voltmeter(mut device: Device, mut interface: Interface) -> Result<(), Error> {
-    let settings = SiSettings::new("V", 0, 30);
+    let settings = SiSettings::new("V", 0, 30, 2);
 
     //
     //
