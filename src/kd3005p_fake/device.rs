@@ -39,6 +39,7 @@ impl DeviceOperations for KD3005PFakeDevice {
 
         crate::common::real::identity::mount(device.clone(), driver.clone()).await?;
         crate::common::real::control::mount(device.clone(), driver.clone()).await?;
+        crate::common::real::measure::mount(device.clone(), driver.clone()).await?;
 
         Ok(())
     }

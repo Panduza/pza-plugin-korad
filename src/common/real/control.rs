@@ -17,11 +17,9 @@ pub async fn mount<SD: CommandResponseProtocol + 'static>(
     // Create attribute
     let itf_control = device.create_interface("control").finish();
 
-    // mount_voltage(device.clone(), itf_control.clone()).await?;
     current::mount(device.clone(), itf_control.clone(), driver.clone()).await?;
     voltage::mount(device.clone(), itf_control.clone(), driver.clone()).await?;
-
-    // mount_options(device.clone(), itf_control.clone()).await?;
+    options::mount(device.clone(), itf_control.clone(), driver.clone()).await?;
 
     Ok(())
 }

@@ -110,12 +110,21 @@ impl DeviceOperations for KD3005PDevice {
 
         //
         //
+        let logger = device.logger.clone();
+
+        //
+        //
         self.prepare_settings(device.clone()).await?;
 
         let driver = self.mount_driver()?;
 
         crate::common::real::identity::mount(device.clone(), driver.clone()).await?;
         crate::common::real::control::mount(device.clone(), driver.clone()).await?;
+        crate::common::real::measure::mount(device.clone(), driver.clone()).await?;
+
+        //
+        //
+        logger.info("Mount Successful !!!");
 
         Ok(())
     }
