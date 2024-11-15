@@ -11,7 +11,7 @@ use tokio::sync::Mutex;
 ///
 ///
 ///
-pub async fn mount<SD: CommandResponseProtocol>(
+pub async fn mount<SD: CommandResponseProtocol + 'static>(
     device: Device,
     mut interface: Interface,
     driver: Arc<Mutex<KoradDriver<SD>>>,
@@ -23,8 +23,8 @@ pub async fn mount<SD: CommandResponseProtocol>(
     ovp::mount(device.clone(), itf_options.clone(), driver.clone()).await?;
     ocp::mount(device.clone(), itf_options.clone(), driver.clone()).await?;
     beep::mount(device.clone(), itf_options.clone(), driver.clone()).await?;
-    lock::mount(device.clone(), itf_options.clone(), driver.clone()).await?;
-    mode::mount(device.clone(), itf_options.clone(), driver.clone()).await?;
+    // lock::mount(device.clone(), itf_options.clone(), driver.clone()).await?;
+    // mode::mount(device.clone(), itf_options.clone(), driver.clone()).await?;
 
     Ok(())
 }
