@@ -22,7 +22,7 @@ pub async fn mount<SD: CommandResponseProtocol + 'static>(
 
     ovp::mount(device.clone(), itf_options.clone(), driver.clone()).await?;
     ocp::mount(device.clone(), itf_options.clone(), driver.clone()).await?;
-    beep::mount(device.clone(), itf_options.clone(), driver.clone()).await?;
+    // beep::mount(device.clone(), itf_options.clone(), driver.clone()).await?;
     // lock::mount(device.clone(), itf_options.clone(), driver.clone()).await?;
     // mode::mount(device.clone(), itf_options.clone(), driver.clone()).await?;
 
