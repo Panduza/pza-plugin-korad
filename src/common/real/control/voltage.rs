@@ -25,24 +25,6 @@ pub async fn mount<SD: CommandResponseProtocol + 'static>(
     let v = driver.lock().await.get_vset().await?;
     control_voltage.set_from_f32(v).await.unwrap();
 
-    // //
-    // //
-    // let att_voltage = interface
-    //     .create_attribute("voltage")
-    //     .with_settings(settings.into())
-    //     .message()
-    //     .with_bidir_access()
-    //     .finish_with_codec::<SiCodec>()
-    //     .await;
-
-    // let v = driver.lock().await.get_vset().await?;
-    // att_voltage.set(SiCodec::from_f32(v, 2)).await.unwrap();
-
-    //
-    // la gestion des codec est penible
-    // les settings à part c'est aussi bof
-    //
-
     //
     // Execute action on each command received
     let logger_for_cmd_event = device.logger.clone();
