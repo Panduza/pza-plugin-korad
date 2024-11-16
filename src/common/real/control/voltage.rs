@@ -1,8 +1,6 @@
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::protocol::CommandResponseProtocol;
-use panduza_platform_core::{
-    spawn_on_command, BidirMsgAtt, Device, DeviceLogger, Interface, SiCodec, SiSettings,
-};
+use panduza_platform_core::{spawn_on_command, BidirMsgAtt, Device, DeviceLogger, Interface};
 use panduza_platform_core::{Error, SiAttServer};
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -14,8 +12,6 @@ pub async fn mount<SD: CommandResponseProtocol + 'static>(
     mut interface: Interface,
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {
-    // let settings = SiSettings::new("V", 0, 30, 2);
-
     let control_voltage = interface
         .create_attribute("voltage")
         .with_rw()
