@@ -1,9 +1,9 @@
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::protocol::CommandResponseProtocol;
-use panduza_platform_core::Error;
 use panduza_platform_core::{
     spawn_on_command, BidirMsgAtt, Device, DeviceLogger, Interface, SiCodec, SiSettings,
 };
+use panduza_platform_core::{Error, SiAttServer};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 ///
@@ -14,25 +14,39 @@ pub async fn mount<SD: CommandResponseProtocol + 'static>(
     mut interface: Interface,
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {
-    let settings = SiSettings::new("V", 0, 30, 2);
+    // let settings = SiSettings::new("V", 0, 30, 2);
 
-    //
-    //
-    let att_voltage = interface
+    let control_voltage = interface
         .create_attribute("voltage")
-        .with_settings(settings.into())
-        .message()
-        .with_bidir_access()
-        .finish_with_codec::<SiCodec>()
-        .await;
+        .with_rw()
+        .finish_as_si("V", 0, 30, 2)
+        .await?;
 
     let v = driver.lock().await.get_vset().await?;
-    att_voltage.set(SiCodec::from_f32(v, 2)).await.unwrap();
+    control_voltage.set_from_f32(v).await.unwrap();
+
+    // //
+    // //
+    // let att_voltage = interface
+    //     .create_attribute("voltage")
+    //     .with_settings(settings.into())
+    //     .message()
+    //     .with_bidir_access()
+    //     .finish_with_codec::<SiCodec>()
+    //     .await;
+
+    // let v = driver.lock().await.get_vset().await?;
+    // att_voltage.set(SiCodec::from_f32(v, 2)).await.unwrap();
+
+    //
+    // la gestion des codec est penible
+    // les settings à part c'est aussi bof
+    //
 
     //
     // Execute action on each command received
     let logger_for_cmd_event = device.logger.clone();
-    let att_voltage_for_cmd_event = att_voltage.clone();
+    let att_voltage_for_cmd_event = control_voltage.clone();
     spawn_on_command!(
         device,
         att_voltage_for_cmd_event,
@@ -53,18 +67,20 @@ pub async fn mount<SD: CommandResponseProtocol + 'static>(
 ///
 async fn on_command<SD: CommandResponseProtocol>(
     logger: DeviceLogger,
-    mut value_value_attr: BidirMsgAtt<SiCodec>,
+    mut att_server: SiAttServer,
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {
-    while let Some(command) = value_value_attr.pop_cmd().await {
-        //
-        // Log
-        logger.debug(format!("SI voltage command received '{:?}'", command));
-
-        let v = command.into_f32()?;
-        driver.lock().await.set_vset(v).await?;
-
-        value_value_attr.set(command).await?;
+    while let Some(command_result) = att_server.pop_cmd_as_f32().await {
+        match command_result {
+            Ok(v) => {
+                logger.debug(format!("SI voltage command received '{:?}'", v));
+                driver.lock().await.set_vset(v).await?;
+                att_server.set_from_f32(v).await?;
+            }
+            Err(e) => {
+                logger.error(format!("ERRRR '{:?}'", e));
+            }
+        }
     }
     Ok(())
 }
