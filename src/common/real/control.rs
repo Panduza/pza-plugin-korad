@@ -17,6 +17,11 @@ pub async fn mount<SD: CommandResponseProtocol + 'static>(
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {
     //
+    // Start logging
+    let logger = device.logger.clone();
+    logger.info("Mounting 'control' class...");
+
+    //
     // Create attribute
     let mut itf_control = device.create_interface("control").finish();
 
@@ -49,6 +54,10 @@ pub async fn mount<SD: CommandResponseProtocol + 'static>(
             driver.clone()
         )
     );
+
+    //
+    // End of mount
+    logger.info("Mounting 'control' class -> OK");
     Ok(())
 }
 

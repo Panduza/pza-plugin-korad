@@ -34,7 +34,13 @@ impl CommandResponseProtocol for Driver {
         if *command == "VOUT1".to_string() {
             return Ok("2.0".to_string());
         }
+        if *command == "ISET1?".to_string() {
+            return Ok("2.0".to_string());
+        }
+        if *command == "VSET1?".to_string() {
+            return Ok("2.0".to_string());
+        }
 
-        return Ok("".to_string());
+        return Ok("1".to_string());
     }
 }
