@@ -18,7 +18,8 @@ impl CommandResponseProtocol for Driver {
     ///
     ///
     ///
-    async fn send(&mut self, _command: &String) -> Result<(), Error> {
+    async fn send(&mut self, command: &String) -> Result<(), Error> {
+        println!("Fake Send {:?}", command);
         Ok(())
     }
 
@@ -26,6 +27,9 @@ impl CommandResponseProtocol for Driver {
     ///
     ///
     async fn ask(&mut self, command: &String) -> Result<String, Error> {
+        //
+        //
+        println!("Fake Ask {:?}", command);
         //
         //
         if *command == "*IDN".to_string() {

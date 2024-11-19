@@ -1,7 +1,7 @@
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::protocol::CommandResponseProtocol;
+use panduza_platform_core::{log_info, Error, SiAttServer};
 use panduza_platform_core::{spawn_on_command, Device, DeviceLogger, Interface};
-use panduza_platform_core::{Error, SiAttServer};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
@@ -20,7 +20,7 @@ pub async fn mount<SD: CommandResponseProtocol + 'static>(
 
     //
     // Create the attribute
-    let control_voltage = interface
+    let att_server = interface
         .create_attribute("voltage")
         .with_rw()
         .finish_as_si("V", 0, 30, 2)
@@ -29,20 +29,16 @@ pub async fn mount<SD: CommandResponseProtocol + 'static>(
     //
     // Init with a first value
     let v = driver.lock().await.get_vset().await?;
-    control_voltage.set_from_f32(v).await?;
+    att_server.set_from_f32(v).await?;
 
     //
     // Execute action on each command received
-    let logger_for_cmd_event = device.logger.clone();
-    let att_voltage_for_cmd_event = control_voltage.clone();
+    let logger_2 = logger.clone();
+    let att_server_2 = att_server.clone();
     spawn_on_command!(
         device,
-        att_voltage_for_cmd_event,
-        on_command(
-            logger_for_cmd_event.clone(),
-            att_voltage_for_cmd_event.clone(),
-            driver.clone()
-        )
+        att_server_2,
+        on_command(logger_2.clone(), att_server_2.clone(), driver.clone())
     );
 
     //
@@ -62,12 +58,18 @@ async fn on_command<SD: CommandResponseProtocol>(
     while let Some(command_result) = att_server.pop_cmd_as_f32().await {
         match command_result {
             Ok(v) => {
-                logger.debug(format!("SI voltage command received '{:?}'", v));
+                log_info!(logger, "'control/voltage' - command received '{:?}'", v);
                 driver.lock().await.set_vset(v).await?;
                 att_server.set_from_f32(v).await?;
+                let real_value = driver.lock().await.get_vset().await?;
+                att_server.set_from_f32(real_value).await?;
             }
             Err(e) => {
-                logger.error(format!("ERRRR '{:?}'", e));
+                let alert = format!("'control/voltage' - warning on received command '{:?}'", e);
+                logger.warn(&alert);
+                att_server.send_alert(alert).await;
+                let real_value = driver.lock().await.get_vset().await?;
+                att_server.set_from_f32(real_value).await?;
             }
         }
     }
