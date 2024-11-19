@@ -1,14 +1,10 @@
-use panduza_platform_core::{
-    spawn_on_command, BidirMsgAtt, Device, DeviceLogger, Interface, SiCodec, SiSettings,
-};
-use panduza_platform_core::{AttOnlyMsgAtt, Error};
-use std::sync::Arc;
-
-use panduza_platform_core::protocol::CommandResponseProtocol;
-use panduza_platform_core::BooleanCodec;
-use tokio::sync::Mutex;
-
 use crate::common::driver::KoradDriver;
+use panduza_platform_core::protocol::CommandResponseProtocol;
+use panduza_platform_core::Error;
+use panduza_platform_core::{log_info, spawn_on_command, Device, DeviceLogger, Interface};
+use panduza_platform_core::{BooleanAttServer, SiAttServer};
+use std::sync::Arc;
+use tokio::sync::Mutex;
 
 ///
 ///
@@ -18,41 +14,44 @@ pub async fn mount<SD: CommandResponseProtocol + 'static>(
     mut interface: Interface,
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {
+    //
+    // Create interface
     let mut c_interface = interface.create_interface("current").finish();
-
-    let settings = SiSettings::new("A", 0, 3, 3);
 
     //
     //
     let att_current = c_interface
         .create_attribute("value")
-        .with_settings(settings.into())
-        .message()
-        .with_att_only_access()
-        .finish_with_codec::<SiCodec>()
-        .await;
+        .with_ro()
+        .with_info(r#"Hold values returned from the ampermeter"#)
+        .finish_as_si("A", 0, 3, 3)
+        .await?;
 
-    att_current.set(5).await.unwrap();
+    //
+    // Init with a first value
+    att_current.set_from_f32(0.0).await.unwrap();
 
     //
     //
     let att_trigger = c_interface
         .create_attribute("trigger")
-        .message()
-        .with_bidir_access()
-        .finish_with_codec::<BooleanCodec>()
-        .await;
+        .with_rw()
+        .with_info(
+            r#"Trigger a measure in the ampermeter, the data is published on the 'value' topic"#,
+        )
+        .finish_as_boolean()
+        .await?;
 
     //
     // Execute action on each command received
-    let logger_for_cmd_event = device.logger.clone();
-    let att_trigger_for_cmd_event = att_trigger.clone();
+    let logger_2 = device.logger.clone();
+    let att_trigger_2 = att_trigger.clone();
     spawn_on_command!(
         device,
-        att_trigger_for_cmd_event,
+        att_trigger_2,
         on_command(
-            logger_for_cmd_event.clone(),
-            att_trigger_for_cmd_event.clone(),
+            logger_2.clone(),
+            att_trigger_2.clone(),
             att_current.clone(),
             driver.clone()
         )
@@ -68,22 +67,24 @@ pub async fn mount<SD: CommandResponseProtocol + 'static>(
 ///
 async fn on_command<SD: CommandResponseProtocol>(
     logger: DeviceLogger,
-    mut value_value_attr: BidirMsgAtt<BooleanCodec>,
-    value_si_attr: AttOnlyMsgAtt<SiCodec>,
+    mut att_trigger: BooleanAttServer,
+    att_current: SiAttServer,
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {
-    while let Some(command) = value_value_attr.pop_cmd().await {
+    while let Some(command) = att_trigger.pop_cmd().await {
         //
         // Log
-        logger.debug(format!("Trigger current received '{:?}'", command));
+        log_info!(
+            logger,
+            "'measure/current/trigger' - command received '{:?}'",
+            command
+        );
 
-        let trigger = command.value;
-
-        let v = driver.lock().await.get_iout().await?;
-
-        value_value_attr.set(trigger).await?;
-
-        value_si_attr.set(SiCodec::from_f32(v, 3)).await?;
+        if command == true {
+            let v = driver.lock().await.get_iout().await?;
+            att_current.set_from_f32(v).await?;
+            att_trigger.set(true).await?;
+        }
     }
     Ok(())
 }

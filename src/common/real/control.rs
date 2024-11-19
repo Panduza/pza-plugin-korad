@@ -3,8 +3,8 @@ mod options;
 mod voltage;
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::{
-    protocol::CommandResponseProtocol, spawn_on_command, BidirMsgAtt, BooleanCodec, Device,
-    DeviceLogger, Error,
+    protocol::CommandResponseProtocol, spawn_on_command, BooleanAttServer, Device, DeviceLogger,
+    Error,
 };
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -33,26 +33,21 @@ pub async fn mount<SD: CommandResponseProtocol + 'static>(
     //
     let att_oe = itf_control
         .create_attribute("output_enable")
-        .message()
-        .with_bidir_access()
-        .finish_with_codec::<BooleanCodec>()
-        .await;
+        .with_rw()
+        .finish_as_boolean()
+        .await?;
 
     let v = driver.lock().await.get_out().await?;
     att_oe.set(v).await.unwrap();
 
     //
     // Execute action on each command received
-    let logger_for_cmd_event = device.logger.clone();
-    let att_oe_for_cmd_event = att_oe.clone();
+    let logger_2 = device.logger.clone();
+    let att_oe_2 = att_oe.clone();
     spawn_on_command!(
         device,
-        att_oe_for_cmd_event,
-        on_command(
-            logger_for_cmd_event.clone(),
-            att_oe_for_cmd_event.clone(),
-            driver.clone()
-        )
+        att_oe_2,
+        on_command(logger_2.clone(), att_oe_2.clone(), driver.clone())
     );
 
     //
@@ -66,7 +61,7 @@ pub async fn mount<SD: CommandResponseProtocol + 'static>(
 ///
 async fn on_command<SD: CommandResponseProtocol>(
     logger: DeviceLogger,
-    mut att_oe: BidirMsgAtt<BooleanCodec>,
+    mut att_oe: BooleanAttServer,
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {
     while let Some(command) = att_oe.pop_cmd().await {
@@ -74,7 +69,7 @@ async fn on_command<SD: CommandResponseProtocol>(
         // Log
         logger.debug(format!("SI voltage command received '{:?}'", command));
 
-        driver.lock().await.set_out(command.value).await?;
+        driver.lock().await.set_out(command).await?;
 
         let v = driver.lock().await.get_out().await?;
         att_oe.set(v).await?;

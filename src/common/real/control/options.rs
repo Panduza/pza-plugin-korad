@@ -1,6 +1,6 @@
-mod beep;
-mod lock;
-mod mode;
+// mod beep;
+// mod lock;
+// mod mode;
 mod ocp;
 mod ovp;
 use crate::common::driver::KoradDriver;

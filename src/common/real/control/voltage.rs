@@ -23,13 +23,7 @@ pub async fn mount<SD: CommandResponseProtocol + 'static>(
     let att_server = interface
         .create_attribute("voltage")
         .with_rw()
-        .with_info(
-            r#"
-# control/voltage
-
-Allow to read & write the voltage limit value of the power supply
-"#,
-        )
+        .with_info(r#"Allow to read & write the voltage limit value of the power supply"#)
         .finish_as_si("V", 0, 30, 2)
         .await?;
 
