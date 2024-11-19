@@ -23,6 +23,13 @@ pub async fn mount<SD: CommandResponseProtocol + 'static>(
     let att_server = interface
         .create_attribute("current")
         .with_rw()
+        .with_info(
+            r#"
+# control/current
+
+Allow to read & write the current limit value of the power supply
+"#,
+        )
         .finish_as_si("A", 0, 5, 3)
         .await?;
 
