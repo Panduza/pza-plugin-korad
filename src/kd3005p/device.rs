@@ -8,7 +8,7 @@ use panduza_platform_core::drivers::serial::eol::Driver as SerialEolDriver;
 use panduza_platform_core::drivers::serial::Settings as SerialSettings;
 use panduza_platform_core::drivers::usb::Settings as UsbSettings;
 use panduza_platform_core::DeviceLogger;
-use panduza_platform_core::{Device, DeviceOperations, Error};
+use panduza_platform_core::{Device, DriverOperations, Error};
 use serde_json::json;
 use tokio::sync::Mutex;
 use tokio::time::sleep;
@@ -99,7 +99,7 @@ impl KD3005PDevice {
 }
 
 #[async_trait]
-impl DeviceOperations for KD3005PDevice {
+impl DriverOperations for KD3005PDevice {
     ///
     ///
     ///

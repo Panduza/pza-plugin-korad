@@ -1,6 +1,6 @@
 use crate::common::{driver::KoradDriver, fake::Driver as SerialFakeDriver};
 use async_trait::async_trait;
-use panduza_platform_core::{Device, DeviceOperations, Error};
+use panduza_platform_core::{Device, DriverOperations, Error};
 use std::{sync::Arc, time::Duration};
 use tokio::{sync::Mutex, time::sleep};
 
@@ -30,7 +30,7 @@ impl KD3005PFakeDevice {
 }
 
 #[async_trait]
-impl DeviceOperations for KD3005PFakeDevice {
+impl DriverOperations for KD3005PFakeDevice {
     ///
     ///
     ///

@@ -4,7 +4,7 @@ use panduza_platform_core::drivers::serial::time_lock::Driver as SerialTimeLockD
 use panduza_platform_core::drivers::serial::Settings as SerialSettings;
 use panduza_platform_core::drivers::usb::Settings as UsbSettings;
 use panduza_platform_core::DeviceLogger;
-use panduza_platform_core::{Device, DeviceOperations, Error};
+use panduza_platform_core::{Device, DriverOperations, Error};
 use serde_json::json;
 use std::sync::Arc;
 use std::time::Duration;
@@ -89,7 +89,7 @@ impl KA3005PDevice {
 }
 
 #[async_trait]
-impl DeviceOperations for KA3005PDevice {
+impl DriverOperations for KA3005PDevice {
     ///
     ///
     ///
