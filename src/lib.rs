@@ -14,3 +14,13 @@ pub fn plugin_producers() -> Vec<Box<dyn Producer>> {
     producers.push(kd3005p_fake::producer::Kd3005pFake::new());
     return producers;
 }
+
+//
+//
+pub fn plugin_scanners() -> Vec<Box<dyn Scanner>> {
+    let mut scanners: Vec<Box<dyn Scanner>> = vec![];
+    // scanners.push(ka3005p::producer::KA3005P::new());
+    // scanners.push(kd3005p::producer::KD3005P::new());
+    // scanners.push(kd3005p_fake::producer::Kd3005pFake::new());
+    return scanners;
+}
