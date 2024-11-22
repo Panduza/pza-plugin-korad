@@ -4,13 +4,13 @@ edition = "2021"
 
 [lib]
 path = "src/lib.rs"
-crate-type = ["cdylib"]
+crate-type = ["lib", "cdylib"]
 
 
 [dependencies]
 
 # The panduza core library
-panduza-platform-core = { git = "https://github.com/Panduza/panduza-platform-core", branch = "main", features = [
+panduza-platform-core = { git = "https://github.com/Panduza/panduza-platform-core", branch = "store", features = [
     "log",
     "serial",
 ] }

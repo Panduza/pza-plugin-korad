@@ -1,5 +1,5 @@
 use super::device::KD3005PDevice;
-use panduza_platform_core::{DeviceOperations, Producer};
+use panduza_platform_core::{DriverOperations, Producer};
 
 pub struct KD3005P {}
 
@@ -18,7 +18,15 @@ impl Producer for KD3005P {
         "KD3005P".to_string()
     }
 
-    fn produce(&self) -> Result<Box<dyn DeviceOperations>, panduza_platform_core::Error> {
+    fn description(&self) -> String {
+        "Driver for KD3005P Power Supply".to_string()
+    }
+
+    fn props(&self) -> panduza_platform_core::Props {
+        panduza_platform_core::Props::default()
+    }
+
+    fn produce(&self) -> Result<Box<dyn DriverOperations>, panduza_platform_core::Error> {
         return Ok(Box::new(KD3005PDevice::new()));
     }
 }

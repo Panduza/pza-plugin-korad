@@ -1,7 +1,7 @@
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::protocol::CommandResponseProtocol;
 use panduza_platform_core::{log_info, Error, SiAttServer};
-use panduza_platform_core::{spawn_on_command, Device, DeviceLogger, Interface};
+use panduza_platform_core::{spawn_on_command, Class, DeviceLogger, Instance};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
@@ -9,18 +9,18 @@ use tokio::sync::Mutex;
 /// control/current
 ///
 pub async fn mount<SD: CommandResponseProtocol + 'static>(
-    mut device: Device,
-    mut interface: Interface,
+    mut instance: Instance,
+    mut class: Class,
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {
     //
     // Start logging
-    let logger = device.logger.clone();
+    let logger = instance.logger.clone();
     logger.info("Mounting 'control/current' class...");
 
     //
     // Create the attribute
-    let att_server = interface
+    let att_server = class
         .create_attribute("current")
         .with_rw()
         .with_info(r#"Allow to read & write the current limit value of the power supply"#)
@@ -37,7 +37,7 @@ pub async fn mount<SD: CommandResponseProtocol + 'static>(
     let logger_2 = logger.clone();
     let att_server_2 = att_server.clone();
     spawn_on_command!(
-        device,
+        instance,
         att_server_2,
         on_command(logger_2.clone(), att_server_2.clone(), driver.clone())
     );
