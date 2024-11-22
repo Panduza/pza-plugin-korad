@@ -1,7 +1,9 @@
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::protocol::CommandResponseProtocol;
 use panduza_platform_core::Error;
-use panduza_platform_core::{spawn_on_command, BooleanAttServer, Device, DeviceLogger, Interface};
+use panduza_platform_core::{
+    spawn_on_command, BooleanAttServer, Class, DeviceLogger, DriverInstance,
+};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
@@ -9,13 +11,13 @@ use tokio::sync::Mutex;
 ///
 ///
 pub async fn mount<SD: CommandResponseProtocol + 'static>(
-    mut device: Device,
-    mut interface: Interface,
+    mut instance: DriverInstance,
+    mut class: Class,
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {
     //
     //
-    let att_voltage = interface
+    let att_voltage = class
         .create_attribute("ocp")
         .with_wo()
         .with_info(
@@ -27,10 +29,10 @@ pub async fn mount<SD: CommandResponseProtocol + 'static>(
 
     //
     // Execute action on each command received
-    let logger_2 = device.logger.clone();
+    let logger_2 = instance.logger.clone();
     let att_voltage_2 = att_voltage.clone();
     spawn_on_command!(
-        device,
+        instance,
         att_voltage_2,
         on_command(logger_2.clone(), att_voltage_2.clone(), driver.clone())
     );

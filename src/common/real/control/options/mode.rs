@@ -11,7 +11,7 @@ use tokio::sync::Mutex;
 ///
 ///
 pub async fn mount<SD: CommandResponseProtocol>(
-    mut device: Device,
+    mut instance: DriverInstance,
     mut interface: Interface,
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {

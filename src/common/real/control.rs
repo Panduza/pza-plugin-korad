@@ -3,8 +3,8 @@ mod options;
 mod voltage;
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::{
-    protocol::CommandResponseProtocol, spawn_on_command, BooleanAttServer, Device, DeviceLogger,
-    Error,
+    protocol::CommandResponseProtocol, spawn_on_command, BooleanAttServer, DeviceLogger,
+    DriverInstance, Error,
 };
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -13,21 +13,21 @@ use tokio::sync::Mutex;
 ///
 ///
 pub async fn mount<SD: CommandResponseProtocol + 'static>(
-    mut device: Device,
+    mut instance: DriverInstance,
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {
     //
     // Start logging
-    let logger = device.logger.clone();
+    let logger = instance.logger.clone();
     logger.info("Mounting 'control' class...");
 
     //
     // Create attribute
-    let mut itf_control = device.create_interface("control").finish();
+    let mut itf_control = instance.create_class("control").finish();
 
-    current::mount(device.clone(), itf_control.clone(), driver.clone()).await?;
-    voltage::mount(device.clone(), itf_control.clone(), driver.clone()).await?;
-    options::mount(device.clone(), itf_control.clone(), driver.clone()).await?;
+    current::mount(instance.clone(), itf_control.clone(), driver.clone()).await?;
+    voltage::mount(instance.clone(), itf_control.clone(), driver.clone()).await?;
+    options::mount(instance.clone(), itf_control.clone(), driver.clone()).await?;
 
     //
     //
@@ -42,10 +42,10 @@ pub async fn mount<SD: CommandResponseProtocol + 'static>(
 
     //
     // Execute action on each command received
-    let logger_2 = device.logger.clone();
+    let logger_2 = instance.logger.clone();
     let att_oe_2 = att_oe.clone();
     spawn_on_command!(
-        device,
+        instance,
         att_oe_2,
         on_command(logger_2.clone(), att_oe_2.clone(), driver.clone())
     );
