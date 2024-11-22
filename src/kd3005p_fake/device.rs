@@ -1,6 +1,6 @@
 use crate::common::{driver::KoradDriver, fake::Driver as SerialFakeDriver};
 use async_trait::async_trait;
-use panduza_platform_core::{DriverInstance, DriverOperations, Error};
+use panduza_platform_core::{Instance, DriverOperations, Error};
 use std::{sync::Arc, time::Duration};
 use tokio::{sync::Mutex, time::sleep};
 
@@ -34,7 +34,7 @@ impl DriverOperations for KD3005PFakeDevice {
     ///
     ///
     ///
-    async fn mount(&mut self, instance: DriverInstance) -> Result<(), Error> {
+    async fn mount(&mut self, instance: Instance) -> Result<(), Error> {
         let driver = self.mount_driver()?;
 
         crate::common::real::identity::mount(instance.clone(), driver.clone()).await?;
@@ -46,7 +46,7 @@ impl DriverOperations for KD3005PFakeDevice {
     ///
     /// Easiest way to implement the reboot event
     ///
-    async fn wait_reboot_event(&mut self, _instance: DriverInstance) {
+    async fn wait_reboot_event(&mut self, _instance: Instance) {
         sleep(Duration::from_secs(5)).await;
     }
 }

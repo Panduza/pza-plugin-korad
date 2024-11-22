@@ -2,7 +2,7 @@ mod ampermeter;
 mod voltmeter;
 
 use crate::common::driver::KoradDriver;
-use panduza_platform_core::{protocol::CommandResponseProtocol, DriverInstance, Error};
+use panduza_platform_core::{protocol::CommandResponseProtocol, Error, Instance};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
@@ -10,7 +10,7 @@ use tokio::sync::Mutex;
 ///
 ///
 pub async fn mount<SD: CommandResponseProtocol + 'static>(
-    mut instance: DriverInstance,
+    mut instance: Instance,
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {
     //

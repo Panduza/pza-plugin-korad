@@ -3,7 +3,7 @@ use async_trait::async_trait;
 use panduza_platform_core::drivers::serial::time_lock::Driver as SerialTimeLockDriver;
 use panduza_platform_core::drivers::serial::Settings as SerialSettings;
 use panduza_platform_core::drivers::usb::Settings as UsbSettings;
-use panduza_platform_core::{DeviceLogger, DriverInstance};
+use panduza_platform_core::{DeviceLogger, Instance};
 use panduza_platform_core::{DriverOperations, Error};
 use serde_json::json;
 use std::sync::Arc;
@@ -41,7 +41,7 @@ impl KA3005PDevice {
     ///
     /// Prepare settings of the device
     ///
-    pub async fn prepare_settings(&mut self, instance: DriverInstance) -> Result<(), Error> {
+    pub async fn prepare_settings(&mut self, instance: Instance) -> Result<(), Error> {
         // Get the device logger
         let logger = instance.logger.clone();
 
@@ -93,7 +93,7 @@ impl DriverOperations for KA3005PDevice {
     ///
     ///
     ///
-    async fn mount(&mut self, instance: DriverInstance) -> Result<(), Error> {
+    async fn mount(&mut self, instance: Instance) -> Result<(), Error> {
         //
         // Init logger
         self.logger = Some(instance.logger.clone());
@@ -113,7 +113,7 @@ impl DriverOperations for KA3005PDevice {
     ///
     /// Easiest way to implement the reboot event
     ///
-    async fn wait_reboot_event(&mut self, _instance: DriverInstance) {
+    async fn wait_reboot_event(&mut self, _instance: Instance) {
         sleep(Duration::from_secs(5)).await;
     }
 }
