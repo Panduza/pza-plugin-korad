@@ -4,6 +4,7 @@ pub mod common;
 mod ka3005p;
 mod kd3005p;
 mod kd3005p_fake;
+mod scanner;
 
 // Export the producers of the plugin
 //
@@ -19,8 +20,6 @@ pub fn plugin_producers() -> Vec<Box<dyn Producer>> {
 //
 pub fn plugin_scanners() -> Vec<Box<dyn Scanner>> {
     let mut scanners: Vec<Box<dyn Scanner>> = vec![];
-    // scanners.push(ka3005p::producer::KA3005P::new());
-    // scanners.push(kd3005p::producer::KD3005P::new());
-    // scanners.push(kd3005p_fake::producer::Kd3005pFake::new());
+    scanners.push(scanner::KoradScanner::default().boxed());
     return scanners;
 }
