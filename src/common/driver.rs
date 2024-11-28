@@ -1,4 +1,4 @@
-use panduza_platform_core::protocol::CommandResponseProtocol;
+use panduza_platform_core::protocol::AsciiCmdRespProtocol;
 use panduza_platform_core::Error;
 
 ///
@@ -8,7 +8,7 @@ pub struct KoradDriver<SD> {
     driver: SD,
 }
 
-impl<SD: CommandResponseProtocol> KoradDriver<SD> {
+impl<SD: AsciiCmdRespProtocol> KoradDriver<SD> {
     ///
     ///
     ///

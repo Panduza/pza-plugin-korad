@@ -4,14 +4,14 @@
 mod ocp;
 mod ovp;
 use crate::common::driver::KoradDriver;
-use panduza_platform_core::{protocol::CommandResponseProtocol, Class, Instance, Error};
+use panduza_platform_core::{protocol::AsciiCmdRespProtocol, Class, Instance, Error};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
 ///
 ///
 ///
-pub async fn mount<SD: CommandResponseProtocol + 'static>(
+pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
     instance: Instance,
     mut interface: Class,
     driver: Arc<Mutex<KoradDriver<SD>>>,
