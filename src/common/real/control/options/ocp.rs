@@ -2,7 +2,7 @@ use crate::common::driver::KoradDriver;
 use panduza_platform_core::protocol::AsciiCmdRespProtocol;
 use panduza_platform_core::Error;
 use panduza_platform_core::{
-    spawn_on_command, BooleanAttServer, Class, DeviceLogger, Instance,
+    spawn_on_command, BooleanAttServer, Class, InstanceLogger, Instance,
 };
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -46,7 +46,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
 ///
 ///
 async fn on_command<SD: AsciiCmdRespProtocol + 'static>(
-    logger: DeviceLogger,
+    logger: InstanceLogger,
     mut value_value_attr: BooleanAttServer,
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {

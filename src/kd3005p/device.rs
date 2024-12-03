@@ -7,8 +7,8 @@ use crate::common::driver::KoradDriver;
 use panduza_platform_core::drivers::serial::eol::Driver as SerialEolDriver;
 use panduza_platform_core::drivers::serial::Settings as SerialSettings;
 use panduza_platform_core::drivers::usb::Settings as UsbSettings;
-use panduza_platform_core::{DeviceLogger, Instance};
 use panduza_platform_core::{DriverOperations, Error};
+use panduza_platform_core::{Instance, InstanceLogger};
 use serde_json::json;
 use tokio::sync::Mutex;
 use tokio::time::sleep;
@@ -23,7 +23,7 @@ static DEVICE_SERIAL_BAUDRATE: u32 = 9600; // We do not care... it is USB serial
 pub struct KD3005PDevice {
     ///
     /// Device logger
-    logger: Option<DeviceLogger>,
+    logger: Option<InstanceLogger>,
     ///
     /// Serial settings to connect to the pico
     serial_settings: Option<SerialSettings>,
@@ -83,7 +83,10 @@ impl KD3005PDevice {
     ///
     /// Try to mount the connector to reach the device
     ///
-    pub fn mount_driver(&mut self) -> Result<Arc<Mutex<KoradDriver<SerialEolDriver>>>, Error> {
+    pub fn mount_driver(
+        &mut self,
+        instance: Instance,
+    ) -> Result<Arc<Mutex<KoradDriver<SerialEolDriver>>>, Error> {
         //
         // Recover settings
         let settings = self.serial_settings.as_ref().ok_or(Error::BadSettings(
@@ -92,7 +95,7 @@ impl KD3005PDevice {
 
         let driver = SerialEolDriver::open(settings, vec![b'\n'])?;
 
-        let kdriver = KoradDriver::new(driver);
+        let kdriver = KoradDriver::new(driver, instance.logger.clone());
 
         Ok(Arc::new(Mutex::new(kdriver)))
     }
@@ -116,7 +119,7 @@ impl DriverOperations for KD3005PDevice {
         //
         self.prepare_settings(instance.clone()).await?;
 
-        let driver = self.mount_driver()?;
+        let driver = self.mount_driver(instance.clone())?;
 
         crate::common::real::identity::mount(instance.clone(), driver.clone()).await?;
         crate::common::real::control::mount(instance.clone(), driver.clone()).await?;

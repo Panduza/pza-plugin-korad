@@ -1,6 +1,6 @@
 use crate::common::{driver::KoradDriver, fake::Driver as SerialFakeDriver};
 use async_trait::async_trait;
-use panduza_platform_core::{Instance, DriverOperations, Error};
+use panduza_platform_core::{DriverOperations, Error, Instance};
 use std::{sync::Arc, time::Duration};
 use tokio::{sync::Mutex, time::sleep};
 
@@ -20,10 +20,13 @@ impl KD3005PFakeDevice {
     ///
     /// Try to mount the connector to reach the device
     ///
-    pub fn mount_driver(&mut self) -> Result<Arc<Mutex<KoradDriver<SerialFakeDriver>>>, Error> {
+    pub fn mount_driver(
+        &mut self,
+        instance: Instance,
+    ) -> Result<Arc<Mutex<KoradDriver<SerialFakeDriver>>>, Error> {
         let driver = SerialFakeDriver::open()?;
 
-        let kdriver = KoradDriver::new(driver);
+        let kdriver = KoradDriver::new(driver, instance.logger.clone());
 
         Ok(Arc::new(Mutex::new(kdriver)))
     }
@@ -35,7 +38,7 @@ impl DriverOperations for KD3005PFakeDevice {
     ///
     ///
     async fn mount(&mut self, instance: Instance) -> Result<(), Error> {
-        let driver = self.mount_driver()?;
+        let driver = self.mount_driver(instance.clone())?;
 
         crate::common::real::identity::mount(instance.clone(), driver.clone()).await?;
         crate::common::real::control::mount(instance.clone(), driver.clone()).await?;

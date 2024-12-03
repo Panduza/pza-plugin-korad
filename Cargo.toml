@@ -1,25 +1,17 @@
 [package]
 name = "pza-plugin-korad"
 edition = "2021"
-version = "1.0.3"
+version = "1.0.4"
 
 [lib]
 path = "src/lib.rs"
 crate-type = ["lib", "cdylib"]
 
-
 [dependencies]
-
 # The panduza core library
-# panduza-platform-core = { git = "https://github.com/Panduza/panduza-platform-core", branch = "main", features = [
-#     "log",
-#     "serial",
-# ] }
-panduza-platform-core = { git = "https://github.com/Panduza/panduza-platform-core", tag = "0.1.4", features = [
+panduza-platform-core = { git = "https://github.com/Panduza/panduza-platform-core", tag = "0.1.5", features = [
     "serial",
-    "log",
 ] }
-
 # The panduza connectors library
 # Main async framework for the platform
 tokio = { version = "1", features = ["full", "tracing"] }
@@ -30,23 +22,16 @@ async-trait = "0.1.77"
 # Futures support
 futures = "0.3.17"
 
-
 [package.metadata.cargo-post.dependencies]
-
-panduza-platform-core = { git = "https://github.com/Panduza/panduza-platform-core", tag = "0.1.4", features = [
-    "log",
-] }
-
+# Only for env paths
+panduza-platform-core = { git = "https://github.com/Panduza/panduza-platform-core", tag = "0.1.5" }
 
 [build-dependencies]
+# 
 prost-build = { version = "0.13.1" }
-
 
 [features]
 
-# Enable tracing in stdout
-log = []
-
-
+# Enable this if you want to build this driver as a dynamic plugin
 # 
 plugin = []
