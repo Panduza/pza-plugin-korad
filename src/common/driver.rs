@@ -1,27 +1,56 @@
 use panduza_platform_core::protocol::AsciiCmdRespProtocol;
-use panduza_platform_core::Error;
+use panduza_platform_core::{log_trace, Error, InstanceLogger};
+use std::time::Instant;
 
 ///
 ///
 ///
 pub struct KoradDriver<SD> {
+    /// Physical level driver
+    ///
     driver: SD,
+
+    /// Logger for the driver
+    ///
+    logger: InstanceLogger,
 }
 
 impl<SD: AsciiCmdRespProtocol> KoradDriver<SD> {
     ///
+    /// Create a new driver
     ///
-    ///
-    pub fn new(driver: SD) -> Self {
-        Self { driver: driver }
+    pub fn new(driver: SD, logger: InstanceLogger) -> Self {
+        Self {
+            driver: driver,
+            logger: logger,
+        }
     }
 
     ///
     /// Get identity string
     ///
     pub async fn get_idn(&mut self) -> Result<String, Error> {
+        //
+        // Measure perfs
+        let start = Instant::now();
+
+        //
+        // Perform request
         let cmd = "*IDN?".to_string();
         let response = self.driver.ask(&cmd).await?;
+
+        //
+        // Log
+        log_trace!(
+            self.logger,
+            "ASK <=> {:?} - {:?} - {:.2?}",
+            cmd,
+            response,
+            start.elapsed()
+        );
+
+        //
+        // End
         Ok(response)
     }
 
@@ -29,13 +58,30 @@ impl<SD: AsciiCmdRespProtocol> KoradDriver<SD> {
     /// Control current getter
     ///
     pub async fn get_iset(&mut self) -> Result<f32, Error> {
+        //
+        // Measure perfs
+        let start = Instant::now();
+
+        //
+        // Perform request
         let cmd = "ISET1?".to_string();
         let response = self.driver.ask(&cmd).await?;
 
+        //
+        // Log
+        log_trace!(
+            self.logger,
+            "ASK <=> {:?} - {:?} - {:.2?}",
+            cmd,
+            response,
+            start.elapsed()
+        );
+
+        //
+        // End
         let value = response
             .parse::<f32>()
             .map_err(|e| Error::Generic(format!("{:?}", e)))?;
-
         Ok(value)
     }
 
@@ -51,13 +97,30 @@ impl<SD: AsciiCmdRespProtocol> KoradDriver<SD> {
     /// Control current getter
     ///
     pub async fn get_vset(&mut self) -> Result<f32, Error> {
+        //
+        // Measure perfs
+        let start = Instant::now();
+
+        //
+        // Perform request
         let cmd = "VSET1?".to_string();
         let response = self.driver.ask(&cmd).await?;
 
+        //
+        // Log
+        log_trace!(
+            self.logger,
+            "ASK <=> {:?} - {:?} - {:.2?}",
+            cmd,
+            response,
+            start.elapsed()
+        );
+
+        //
+        // End
         let value = response
             .parse::<f32>()
             .map_err(|e| Error::Generic(format!("{:?}", e)))?;
-
         Ok(value)
     }
 
