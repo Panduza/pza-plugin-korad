@@ -1,7 +1,7 @@
 # pza-plugin-korad
 
 ```
-cargo post build --features log
+cargo post build --features plugin
 ```
 
 

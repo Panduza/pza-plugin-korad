@@ -7,7 +7,7 @@ use crate::common::driver::KoradDriver;
 use panduza_platform_core::drivers::serial::eol::Driver as SerialEolDriver;
 use panduza_platform_core::drivers::serial::Settings as SerialSettings;
 use panduza_platform_core::drivers::usb::Settings as UsbSettings;
-use panduza_platform_core::{DeviceLogger, Instance};
+use panduza_platform_core::{InstanceLogger, Instance};
 use panduza_platform_core::{DriverOperations, Error};
 use serde_json::json;
 use tokio::sync::Mutex;
@@ -23,7 +23,7 @@ static DEVICE_SERIAL_BAUDRATE: u32 = 9600; // We do not care... it is USB serial
 pub struct KD3005PDevice {
     ///
     /// Device logger
-    logger: Option<DeviceLogger>,
+    logger: Option<InstanceLogger>,
     ///
     /// Serial settings to connect to the pico
     serial_settings: Option<SerialSettings>,

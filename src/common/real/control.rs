@@ -3,7 +3,7 @@ mod options;
 mod voltage;
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::{
-    protocol::AsciiCmdRespProtocol, spawn_on_command, BooleanAttServer, DeviceLogger, Error,
+    protocol::AsciiCmdRespProtocol, spawn_on_command, BooleanAttServer, InstanceLogger, Error,
     Instance,
 };
 use std::sync::Arc;
@@ -60,7 +60,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
 ///
 ///
 async fn on_command<SD: AsciiCmdRespProtocol>(
-    logger: DeviceLogger,
+    logger: InstanceLogger,
     mut att_oe: BooleanAttServer,
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {

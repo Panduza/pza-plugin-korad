@@ -11,14 +11,14 @@ crate-type = ["lib", "cdylib"]
 [dependencies]
 
 # The panduza core library
-# panduza-platform-core = { git = "https://github.com/Panduza/panduza-platform-core", branch = "main", features = [
-#     "log",
-#     "serial",
-# ] }
-panduza-platform-core = { git = "https://github.com/Panduza/panduza-platform-core", tag = "0.1.4", features = [
+
+panduza-platform-core = { path = "C:\\Users\\rodriguez.NET\\Documents\\workspace\\50-PROJET\\XX-XXXX-PZA\\panduza-platform-core", features = [
     "serial",
-    "log",
 ] }
+# panduza-platform-core = { git = "https://github.com/Panduza/panduza-platform-core", tag = "0.1.4", features = [
+#     "serial",
+#     "log",
+# ] }
 
 # The panduza connectors library
 # Main async framework for the platform
@@ -44,9 +44,6 @@ prost-build = { version = "0.13.1" }
 
 [features]
 
-# Enable tracing in stdout
-log = []
-
-
+# Enable this if you want to build this driver as a dynamic plugin
 # 
 plugin = []
