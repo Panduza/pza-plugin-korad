@@ -2,13 +2,12 @@ use crate::common::driver::KoradDriver;
 use panduza_platform_core::protocol::AsciiCmdRespProtocol;
 use panduza_platform_core::Error;
 use panduza_platform_core::{
-    spawn_on_command, BooleanAttServer, Class, InstanceLogger, Instance,
+    log_debug, spawn_on_command, BooleanAttServer, Class, Instance, InstanceLogger,
 };
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
-///
-///
+/// Mount OCP Attribute
 ///
 pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
     mut instance: Instance,
@@ -16,7 +15,12 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {
     //
+    // Start logging
+    let logger = instance.logger.clone();
+    log_debug!(logger, "Mounting 'control/options/ocp' class...");
+
     //
+    // Mount the attribute
     let att_voltage = class
         .create_attribute("ocp")
         .with_wo()
@@ -38,6 +42,10 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
     );
 
     //
+    //
+    log_debug!(logger, "Mounting 'control/options/ocp' class -> OK");
+
+    //
     // Function ok
     Ok(())
 }
@@ -53,7 +61,9 @@ async fn on_command<SD: AsciiCmdRespProtocol + 'static>(
     while let Some(command) = value_value_attr.pop_cmd().await {
         //
         // Log
-        logger.debug(format!("OCP command received '{:?}'", command));
+        log_debug!(logger, "OCP command received '{:?}'", command);
+        //
+        //
         driver.lock().await.set_ocp(command).await?;
     }
     Ok(())

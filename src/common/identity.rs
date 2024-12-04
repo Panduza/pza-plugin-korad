@@ -12,6 +12,10 @@ pub async fn mount<SD: AsciiCmdRespProtocol>(
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {
     //
+    //
+    instance.logger.debug("Mounting 'identity'...");
+
+    //
     // Create attribute
     let att_identity = instance
         .create_attribute("identity")
@@ -24,6 +28,10 @@ pub async fn mount<SD: AsciiCmdRespProtocol>(
     // Just init
     let idn = driver.lock().await.get_idn().await?;
     att_identity.set(idn).await?;
+
+    //
+    //
+    instance.logger.debug("Mounting 'identity' => OK");
 
     Ok(())
 }

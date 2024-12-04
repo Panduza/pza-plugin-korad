@@ -63,8 +63,7 @@ impl KA3005PDevice {
             SerialSettings::new()
                 .set_port_name_from_json_or_usb_settings(&json_settings, &usb_settings)
                 .map_err(|e| Error::Generic(e.to_string()))?
-                .set_baudrate(DEVICE_SERIAL_BAUDRATE)
-                .set_time_lock_duration(Duration::from_millis(300)), // require delay between 2 commands
+                .set_baudrate(DEVICE_SERIAL_BAUDRATE),
         );
 
         Ok(())
@@ -83,7 +82,7 @@ impl KA3005PDevice {
             "Serial Settings not provided".to_string(),
         ))?;
 
-        let driver = SerialTimeLockDriver::open(settings)?;
+        let driver = SerialTimeLockDriver::open(settings, Duration::from_millis(300))?;
 
         let kdriver = KoradDriver::new(driver, instance.logger.clone());
 
@@ -107,9 +106,9 @@ impl DriverOperations for KA3005PDevice {
 
         let driver = self.mount_driver(instance.clone())?;
 
-        crate::common::real::identity::mount(instance.clone(), driver.clone()).await?;
-        crate::common::real::control::mount(instance.clone(), driver.clone()).await?;
-        crate::common::real::measure::mount(instance.clone(), driver.clone()).await?;
+        crate::common::identity::mount(instance.clone(), driver.clone()).await?;
+        crate::common::control::mount(instance.clone(), driver.clone()).await?;
+        crate::common::measure::mount(instance.clone(), driver.clone()).await?;
 
         Ok(())
     }
