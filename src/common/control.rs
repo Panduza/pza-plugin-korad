@@ -3,8 +3,8 @@ mod options;
 mod voltage;
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::{
-    protocol::AsciiCmdRespProtocol, spawn_on_command, BooleanAttServer, InstanceLogger, Error,
-    Instance,
+    protocol::AsciiCmdRespProtocol, spawn_on_command, BooleanAttServer, Error, Instance,
+    InstanceLogger,
 };
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -38,7 +38,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
         .await?;
 
     let v = driver.lock().await.get_out().await?;
-    att_oe.set(v).await.unwrap();
+    att_oe.set(v).await?;
 
     //
     // Execute action on each command received

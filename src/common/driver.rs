@@ -176,8 +176,26 @@ impl<SD: AsciiCmdRespProtocol> KoradDriver<SD> {
     ///
     ///
     pub async fn get_out(&mut self) -> Result<bool, Error> {
+        //
+        // Measure perfs
+        let start = Instant::now();
+
+        //
+        //
         let cmd = "STATUS?".to_string();
         let response = self.driver.ask(&cmd).await?;
+
+        //
+        // Log
+        log_trace!(
+            self.logger,
+            "ASK <=> {:?} - {:?} (as bytes/{:?}) - {:.2?}",
+            cmd,
+            response,
+            response.as_bytes(),
+            start.elapsed()
+        );
+
         let byte = response.as_bytes()[0];
         if (byte & (1 << 6)) == 0 {
             Ok(false)
