@@ -5,6 +5,7 @@ use async_trait::async_trait;
 
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::drivers::serial::eol::Driver as SerialEolDriver;
+// use panduza_platform_core::drivers::serial::time_lock::Driver as SerialTimeLockDriver;
 use panduza_platform_core::drivers::serial::Settings as SerialSettings;
 use panduza_platform_core::drivers::usb::Settings as UsbSettings;
 use panduza_platform_core::{DriverOperations, Error};
@@ -94,6 +95,7 @@ impl KD3005PDevice {
         ))?;
 
         let driver = SerialEolDriver::open(settings, vec![b'\n'])?;
+        // let driver = SerialTimeLockDriver::open(settings, Duration::from_millis(300))?;
 
         let kdriver = KoradDriver::new(driver, instance.logger.clone());
 
@@ -121,9 +123,9 @@ impl DriverOperations for KD3005PDevice {
 
         let driver = self.mount_driver(instance.clone())?;
 
-        crate::common::real::identity::mount(instance.clone(), driver.clone()).await?;
-        crate::common::real::control::mount(instance.clone(), driver.clone()).await?;
-        crate::common::real::measure::mount(instance.clone(), driver.clone()).await?;
+        crate::common::identity::mount(instance.clone(), driver.clone()).await?;
+        crate::common::control::mount(instance.clone(), driver.clone()).await?;
+        crate::common::measure::mount(instance.clone(), driver.clone()).await?;
 
         //
         //

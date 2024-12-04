@@ -220,16 +220,17 @@ impl<SD: AsciiCmdRespProtocol> KoradDriver<SD> {
     ///
     ///
     pub async fn set_ocp(&mut self, value: bool) -> Result<(), Error> {
-        match value {
-            true => {
-                let cmd = "OCP1".to_string();
-                self.driver.send(&cmd).await
-            }
-            false => {
-                let cmd = "OCP0".to_string();
-                self.driver.send(&cmd).await
-            }
+        //
+        // Prepare command
+        let mut cmd = "OCP0".to_string();
+        if value {
+            cmd = "OCP1".to_string();
         }
+
+        //
+        // Send
+        log_trace!(self.logger, "SEND => {:?}", cmd);
+        self.driver.send(&cmd).await
     }
 
     ///

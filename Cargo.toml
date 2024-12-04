@@ -9,9 +9,14 @@ crate-type = ["lib", "cdylib"]
 
 [dependencies]
 # The panduza core library
-panduza-platform-core = { git = "https://github.com/Panduza/panduza-platform-core", tag = "0.1.5", features = [
+# panduza-platform-core = { git = "https://github.com/Panduza/panduza-platform-core", tag = "0.1.5", features = [
+#     "serial",
+# ] }
+panduza-platform-core = { path = "C:/Users/xavie/workspace/panduza-platform-core", features = [
     "serial",
 ] }
+
+
 # The panduza connectors library
 # Main async framework for the platform
 tokio = { version = "1", features = ["full", "tracing"] }
