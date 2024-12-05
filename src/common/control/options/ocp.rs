@@ -36,6 +36,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
     let logger_2 = instance.logger.clone();
     let att_voltage_2 = att_voltage.clone();
     spawn_on_command!(
+        "on_command => control/options/ocp",
         instance,
         att_voltage_2,
         on_command(logger_2.clone(), att_voltage_2.clone(), driver.clone())

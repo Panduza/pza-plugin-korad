@@ -45,6 +45,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
     let logger_2 = instance.logger.clone();
     let att_oe_2 = att_oe.clone();
     spawn_on_command!(
+        "on_command => control",
         instance,
         att_oe_2,
         on_command(logger_2.clone(), att_oe_2.clone(), driver.clone())

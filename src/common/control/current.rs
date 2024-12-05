@@ -1,7 +1,7 @@
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::protocol::AsciiCmdRespProtocol;
 use panduza_platform_core::{log_info, Error, SiAttServer};
-use panduza_platform_core::{spawn_on_command, Class, InstanceLogger, Instance};
+use panduza_platform_core::{spawn_on_command, Class, Instance, InstanceLogger};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
@@ -37,6 +37,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
     let logger_2 = logger.clone();
     let att_server_2 = att_server.clone();
     spawn_on_command!(
+        "on_command => control/current",
         instance,
         att_server_2,
         on_command(logger_2.clone(), att_server_2.clone(), driver.clone())

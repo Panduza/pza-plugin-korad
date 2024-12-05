@@ -47,6 +47,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
     let logger_2 = instance.logger.clone();
     let att_trigger_2 = att_trigger.clone();
     spawn_on_command!(
+        "on_command => measure/voltage/trigger",
         instance,
         att_trigger_2,
         on_command(

@@ -9,7 +9,6 @@ crate-type = ["lib", "cdylib"]
 
 [dependencies]
 
-
 # The panduza core library
 # panduza-platform-core = { path = "C:/Users/xavie/workspace/panduza-platform-core", features = [
 #     "serial",
