@@ -1,6 +1,6 @@
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::protocol::AsciiCmdRespProtocol;
-use panduza_platform_core::{log_debug, log_info, AttributeLogger, Error, SiAttServer};
+use panduza_platform_core::{log_debug, log_info, Container, Error, Logger, SiAttServer};
 use panduza_platform_core::{spawn_on_command, Class, Instance};
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -15,7 +15,9 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
 ) -> Result<(), Error> {
     //
     // Start logging
-    let logger = instance.logger.new_attribute_logger("control", "voltage");
+    let logger = instance
+        .logger
+        .new_for_attribute(Some("control".to_string()), "voltage");
     log_debug!(logger, "Mounting...");
 
     //
@@ -53,7 +55,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
 /// control/voltage => triggered when command is received
 ///
 async fn on_command<SD: AsciiCmdRespProtocol>(
-    logger: AttributeLogger,
+    logger: Logger,
     mut att_server: SiAttServer,
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {

@@ -1,8 +1,8 @@
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::protocol::AsciiCmdRespProtocol;
-use panduza_platform_core::Error;
-use panduza_platform_core::{log_info, spawn_on_command, Class, Instance, InstanceLogger};
+use panduza_platform_core::{log_info, spawn_on_command, Class, Instance, Logger};
 use panduza_platform_core::{BooleanAttServer, SiAttServer};
+use panduza_platform_core::{Container, Error};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
@@ -16,7 +16,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
 ) -> Result<(), Error> {
     //
     // Create interface
-    let mut c_interface = class.create_class("current").finish();
+    let mut c_interface = class.create_class("current").finish().await;
 
     //
     //
@@ -67,7 +67,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
 ///
 ///
 async fn on_command<SD: AsciiCmdRespProtocol>(
-    logger: InstanceLogger,
+    logger: Logger,
     mut att_trigger: BooleanAttServer,
     att_current: SiAttServer,
     driver: Arc<Mutex<KoradDriver<SD>>>,

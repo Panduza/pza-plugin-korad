@@ -42,7 +42,10 @@ impl DriverOperations for KD3005PFakeDevice {
 
         // instance.settings()
 
-        crate::common::identity::mount(instance.clone(), driver.clone()).await?;
+        //
+        // Identity
+        panduza_platform_core::std::attribute::idn::mount(instance.clone(), driver.clone()).await?;
+
         crate::common::control::mount(instance.clone(), driver.clone()).await?;
         crate::common::measure::mount(instance.clone(), driver.clone()).await?;
 

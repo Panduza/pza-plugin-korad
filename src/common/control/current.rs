@@ -1,7 +1,7 @@
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::protocol::AsciiCmdRespProtocol;
-use panduza_platform_core::{log_info, Error, SiAttServer};
-use panduza_platform_core::{spawn_on_command, Class, Instance, InstanceLogger};
+use panduza_platform_core::{log_info, Container, Error, SiAttServer};
+use panduza_platform_core::{spawn_on_command, Class, Instance, Logger};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
@@ -53,7 +53,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
 /// control/current => triggered when command is received
 ///
 async fn on_command<SD: AsciiCmdRespProtocol>(
-    logger: InstanceLogger,
+    logger: Logger,
     mut att_server: SiAttServer,
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {

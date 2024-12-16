@@ -3,8 +3,8 @@ mod options;
 mod voltage;
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::{
-    protocol::AsciiCmdRespProtocol, spawn_on_command, BooleanAttServer, Error, Instance,
-    InstanceLogger,
+    protocol::AsciiCmdRespProtocol, spawn_on_command, BooleanAttServer, Container, Error, Instance,
+    Logger,
 };
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -23,7 +23,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
 
     //
     // Create attribute
-    let mut itf_control = instance.create_class("control").finish();
+    let mut itf_control = instance.create_class("control").finish().await;
 
     current::mount(instance.clone(), itf_control.clone(), driver.clone()).await?;
     voltage::mount(instance.clone(), itf_control.clone(), driver.clone()).await?;
@@ -61,7 +61,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
 ///
 ///
 async fn on_command<SD: AsciiCmdRespProtocol>(
-    logger: InstanceLogger,
+    logger: Logger,
     mut att_oe: BooleanAttServer,
     driver: Arc<Mutex<KoradDriver<SD>>>,
 ) -> Result<(), Error> {

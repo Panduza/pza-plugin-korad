@@ -1,6 +1,6 @@
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::protocol::AsciiCmdRespProtocol;
-use panduza_platform_core::{log_debug, Error, Instance};
+use panduza_platform_core::{log_debug, Container, Error, Instance};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
@@ -13,7 +13,9 @@ pub async fn mount<SD: AsciiCmdRespProtocol>(
 ) -> Result<(), Error> {
     //
     // Create the local logger
-    let logger = instance.logger.new_attribute_logger("", "identity");
+    let logger = instance
+        .logger
+        .new_for_attribute(Some("".to_string()), "identity");
     log_debug!(logger, "Mounting...");
 
     //

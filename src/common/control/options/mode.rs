@@ -2,7 +2,7 @@ use crate::common::driver::KoradDriver;
 use panduza_platform_core::protocol::AsciiCmdRespProtocol;
 use panduza_platform_core::Error;
 use panduza_platform_core::{
-    spawn_on_command, BidirMsgAtt, Device, InstanceLogger, EnumCodec, EnumSettings, Interface,
+    spawn_on_command, BidirMsgAtt, Device, Logger, EnumCodec, EnumSettings, Interface,
 };
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -50,7 +50,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol>(
 ///
 ///
 async fn on_command(
-    logger: InstanceLogger,
+    logger: Logger,
     mut value_value_attr: BidirMsgAtt<EnumCodec>,
 ) -> Result<(), Error> {
     while let Some(command) = value_value_attr.pop_cmd().await {
