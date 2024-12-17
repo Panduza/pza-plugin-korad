@@ -1,5 +1,7 @@
+use async_trait::async_trait;
 use panduza_platform_core::protocol::AsciiCmdRespProtocol;
-use panduza_platform_core::{log_trace, Error, InstanceLogger};
+use panduza_platform_core::std::attribute::idn::IdnReader;
+use panduza_platform_core::{log_trace, Error, Logger};
 use std::time::Instant;
 
 ///
@@ -12,14 +14,42 @@ pub struct KoradDriver<SD> {
 
     /// Logger for the driver
     ///
-    logger: InstanceLogger,
+    logger: Logger,
+}
+
+#[async_trait]
+impl<SD: AsciiCmdRespProtocol> IdnReader for KoradDriver<SD> {
+    async fn read_idn(&mut self) -> Result<String, Error> {
+        //
+        // Measure perfs
+        let start = Instant::now();
+
+        //
+        // Perform request
+        let cmd = "*IDN?".to_string();
+        let response = self.driver.ask(&cmd).await?;
+
+        //
+        // Log
+        log_trace!(
+            self.logger,
+            "ASK <=> {:?} - {:?} - {:.2?}",
+            cmd,
+            response,
+            start.elapsed()
+        );
+
+        //
+        // End
+        Ok(response)
+    }
 }
 
 impl<SD: AsciiCmdRespProtocol> KoradDriver<SD> {
     ///
     /// Create a new driver
     ///
-    pub fn new(driver: SD, logger: InstanceLogger) -> Self {
+    pub fn new(driver: SD, logger: Logger) -> Self {
         Self {
             driver: driver,
             logger: logger,
@@ -176,8 +206,26 @@ impl<SD: AsciiCmdRespProtocol> KoradDriver<SD> {
     ///
     ///
     pub async fn get_out(&mut self) -> Result<bool, Error> {
+        //
+        // Measure perfs
+        let start = Instant::now();
+
+        //
+        //
         let cmd = "STATUS?".to_string();
         let response = self.driver.ask(&cmd).await?;
+
+        //
+        // Log
+        log_trace!(
+            self.logger,
+            "ASK <=> {:?} - {:?} (as bytes/{:?}) - {:.2?}",
+            cmd,
+            response,
+            response.as_bytes(),
+            start.elapsed()
+        );
+
         let byte = response.as_bytes()[0];
         if (byte & (1 << 6)) == 0 {
             Ok(false)

@@ -40,7 +40,12 @@ impl DriverOperations for KD3005PFakeDevice {
     async fn mount(&mut self, instance: Instance) -> Result<(), Error> {
         let driver = self.mount_driver(instance.clone())?;
 
-        crate::common::identity::mount(instance.clone(), driver.clone()).await?;
+        // instance.settings()
+
+        //
+        // Identity
+        panduza_platform_core::std::attribute::idn::mount(instance.clone(), driver.clone()).await?;
+
         crate::common::control::mount(instance.clone(), driver.clone()).await?;
         crate::common::measure::mount(instance.clone(), driver.clone()).await?;
 

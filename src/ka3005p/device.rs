@@ -1,10 +1,10 @@
 use crate::common::driver::KoradDriver;
 use async_trait::async_trait;
-use panduza_platform_core::drivers::serial::time_lock::Driver as SerialTimeLockDriver;
-use panduza_platform_core::drivers::serial::Settings as SerialSettings;
-use panduza_platform_core::drivers::usb::Settings as UsbSettings;
+use panduza_platform_core::connector::serial::time_lock::Driver as SerialTimeLockDriver;
+use panduza_platform_core::connector::serial::Settings as SerialSettings;
+use panduza_platform_core::connector::usb::Settings as UsbSettings;
 use panduza_platform_core::{DriverOperations, Error};
-use panduza_platform_core::{Instance, InstanceLogger};
+use panduza_platform_core::{Instance, Logger};
 use serde_json::json;
 use std::sync::Arc;
 use std::time::Duration;
@@ -21,7 +21,7 @@ static DEVICE_SERIAL_BAUDRATE: u32 = 9600; // We do not care... it is USB serial
 pub struct KA3005PDevice {
     ///
     /// Device logger
-    logger: Option<InstanceLogger>,
+    logger: Option<Logger>,
     ///
     /// Serial settings to connect to the pico
     serial_settings: Option<SerialSettings>,
@@ -106,7 +106,10 @@ impl DriverOperations for KA3005PDevice {
 
         let driver = self.mount_driver(instance.clone())?;
 
-        crate::common::identity::mount(instance.clone(), driver.clone()).await?;
+        //
+        // Identity
+        panduza_platform_core::std::attribute::idn::mount(instance.clone(), driver.clone()).await?;
+
         crate::common::control::mount(instance.clone(), driver.clone()).await?;
         crate::common::measure::mount(instance.clone(), driver.clone()).await?;
 

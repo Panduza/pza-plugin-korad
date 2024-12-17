@@ -1,8 +1,8 @@
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::protocol::AsciiCmdRespProtocol;
-use panduza_platform_core::Error;
-use panduza_platform_core::{log_info, spawn_on_command, Class, InstanceLogger, Instance};
+use panduza_platform_core::{log_info, spawn_on_command, Class, Instance, Logger};
 use panduza_platform_core::{BooleanAttServer, SiAttServer};
+use panduza_platform_core::{Container, Error};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
@@ -16,7 +16,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
 ) -> Result<(), Error> {
     //
     // Create interface
-    let mut c_interface = class.create_class("voltage").finish();
+    let mut c_interface = class.create_class("voltage").finish().await;
 
     //
     //
@@ -29,7 +29,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
 
     //
     // Init with a first value
-    att_voltage.set_from_f32(0.0).await.unwrap();
+    att_voltage.set_from_f32(0.0).await?;
 
     //
     //
@@ -47,6 +47,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
     let logger_2 = instance.logger.clone();
     let att_trigger_2 = att_trigger.clone();
     spawn_on_command!(
+        "on_command => measure/voltage/trigger",
         instance,
         att_trigger_2,
         on_command(
@@ -66,7 +67,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
 ///
 ///
 async fn on_command<SD: AsciiCmdRespProtocol>(
-    logger: InstanceLogger,
+    logger: Logger,
     mut att_trigger: BooleanAttServer,
     att_voltage: SiAttServer,
     driver: Arc<Mutex<KoradDriver<SD>>>,

@@ -23,7 +23,12 @@ impl Producer for Kd3005pFake {
     }
 
     fn props(&self) -> panduza_platform_core::Props {
-        panduza_platform_core::Props::default()
+        let mut props = panduza_platform_core::Props::default();
+        props.add_number_prop("min_voltage", "Minimal available voltage", 0);
+        props.add_number_prop("max_voltage", "Maximal available voltage", 30);
+        props.add_number_prop("min_current", "Minimal available current", 0);
+        props.add_number_prop("max_current", "Maximal available current", 3);
+        props
     }
 
     fn produce(&self) -> Result<Box<dyn DriverOperations>, panduza_platform_core::Error> {
