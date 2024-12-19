@@ -4,6 +4,8 @@ use panduza_platform_core::{Producer, Scanner};
 panduza_platform_core::plugin_interface!("korad");
 
 pub mod common;
+pub use common::ControlSettings;
+
 mod ka3005p;
 mod kd3005p;
 mod kd3005p_fake;

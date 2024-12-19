@@ -1,9 +1,14 @@
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::protocol::AsciiCmdRespProtocol;
-use panduza_platform_core::{log_debug, log_info, Container, Error, Logger, SiAttServer};
+use panduza_platform_core::{
+    log_debug, log_debug_mount_end, log_debug_mount_start, log_info, Container, Error, Logger,
+    SiAttServer,
+};
 use panduza_platform_core::{spawn_on_command, Class, Instance};
 use std::sync::Arc;
 use tokio::sync::Mutex;
+
+use super::ControlSettings;
 
 ///
 /// control/voltage
@@ -12,26 +17,35 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
     mut instance: Instance,
     mut class: Class,
     driver: Arc<Mutex<KoradDriver<SD>>>,
+    control_settings: ControlSettings,
 ) -> Result<(), Error> {
-    //
-    // Start logging
-    let logger = instance
-        .logger
-        .new_for_attribute(Some("control".to_string()), "voltage");
-    log_debug!(logger, "Mounting...");
-
     //
     // Create the attribute
     let att_server = class
         .create_attribute("voltage")
         .with_rw()
         .with_info(r#"Allow to read & write the voltage limit value of the power supply"#)
-        .finish_as_si("V", 0, 30, 2)
+        .finish_as_si(
+            "V",
+            control_settings.min_voltage() as i32,
+            control_settings.max_voltage() as i32,
+            2,
+        )
         .await?;
+    let logger = att_server.logger();
+    log_debug_mount_start!(logger);
 
     //
     // Init with a first value
-    let v = driver.lock().await.get_vset().await?;
+    let mut v = driver.lock().await.get_vset().await?;
+    if v < control_settings.min_voltage() as f32 {
+        v = control_settings.min_voltage() as f32;
+        driver.lock().await.set_vset(v).await?;
+    }
+    if v > control_settings.max_voltage() as f32 {
+        v = control_settings.max_voltage() as f32;
+        driver.lock().await.set_vset(v).await?;
+    }
     att_server.set_from_f32(v).await?;
 
     //
@@ -47,7 +61,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
 
     //
     // End of mount
-    log_debug!(logger, "Mounting => OK");
+    log_debug_mount_end!(logger);
     Ok(())
 }
 

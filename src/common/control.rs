@@ -1,3 +1,5 @@
+pub use super::ControlSettings;
+
 mod current;
 mod options;
 mod voltage;
@@ -15,6 +17,7 @@ use tokio::sync::Mutex;
 pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
     mut instance: Instance,
     driver: Arc<Mutex<KoradDriver<SD>>>,
+    control_settings: ControlSettings,
 ) -> Result<(), Error> {
     //
     // Start logging
@@ -26,7 +29,13 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
     let mut itf_control = instance.create_class("control").finish().await;
 
     current::mount(instance.clone(), itf_control.clone(), driver.clone()).await?;
-    voltage::mount(instance.clone(), itf_control.clone(), driver.clone()).await?;
+    voltage::mount(
+        instance.clone(),
+        itf_control.clone(),
+        driver.clone(),
+        control_settings.clone(),
+    )
+    .await?;
     options::mount(instance.clone(), itf_control.clone(), driver.clone()).await?;
 
     //

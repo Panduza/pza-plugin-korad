@@ -1,9 +1,11 @@
+pub use super::ControlSettings;
+
 use crate::common::driver::KoradDriver;
 use async_trait::async_trait;
 use panduza_platform_core::connector::serial::time_lock::Driver as SerialTimeLockDriver;
 use panduza_platform_core::connector::serial::Settings as SerialSettings;
 use panduza_platform_core::connector::usb::Settings as UsbSettings;
-use panduza_platform_core::{DriverOperations, Error};
+use panduza_platform_core::{log_info, DriverOperations, Error};
 use panduza_platform_core::{Instance, Logger};
 use serde_json::json;
 use std::sync::Arc;
@@ -88,6 +90,26 @@ impl KA3005PDevice {
 
         Ok(Arc::new(Mutex::new(kdriver)))
     }
+
+    ///
+    ///
+    pub async fn prepare_control_settings(
+        &mut self,
+        instance: Instance,
+    ) -> Result<ControlSettings, Error> {
+        //
+        //
+        let instance_settings = instance.settings().await;
+
+        //
+        //
+        let mut control_settings = ControlSettings::new();
+        control_settings.override_with_instance_settings(&instance_settings)?;
+
+        //
+        //
+        Ok(control_settings)
+    }
 }
 
 #[async_trait]
@@ -97,12 +119,17 @@ impl DriverOperations for KA3005PDevice {
     ///
     async fn mount(&mut self, instance: Instance) -> Result<(), Error> {
         //
-        // Init logger
-        self.logger = Some(instance.logger.clone());
+        //
+        let logger = instance.logger.clone();
 
         //
         //
         self.prepare_settings(instance.clone()).await?;
+
+        //
+        //
+        let control_settings = self.prepare_control_settings(instance.clone()).await?;
+        log_info!(logger, "control_settings = {:?}", control_settings);
 
         let driver = self.mount_driver(instance.clone())?;
 
@@ -110,7 +137,8 @@ impl DriverOperations for KA3005PDevice {
         // Identity
         panduza_platform_core::std::attribute::idn::mount(instance.clone(), driver.clone()).await?;
 
-        crate::common::control::mount(instance.clone(), driver.clone()).await?;
+        crate::common::control::mount(instance.clone(), driver.clone(), control_settings.clone())
+            .await?;
         crate::common::measure::mount(instance.clone(), driver.clone()).await?;
 
         Ok(())

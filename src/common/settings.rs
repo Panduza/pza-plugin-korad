@@ -3,10 +3,10 @@ use panduza_platform_core::{Error, InstanceSettings};
 
 ///
 ///
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Settings {
-    min_max_voltage: MinMaxSettings,
-    min_max_current: MinMaxSettings,
+    pub min_max_voltage: MinMaxSettings,
+    pub min_max_current: MinMaxSettings,
 }
 
 impl Settings {
@@ -17,6 +17,19 @@ impl Settings {
             min_max_voltage: MinMaxSettings::new("voltage", "voltage limit", 0, 30, None),
             min_max_current: MinMaxSettings::new("current", "current limit", 0, 3, None),
         }
+    }
+
+    pub fn min_voltage(&self) -> f64 {
+        return self.min_max_voltage.min;
+    }
+    pub fn max_voltage(&self) -> f64 {
+        return self.min_max_voltage.max;
+    }
+    pub fn min_current(&self) -> f64 {
+        return self.min_max_current.min;
+    }
+    pub fn max_current(&self) -> f64 {
+        return self.min_max_current.max;
     }
 
     ///

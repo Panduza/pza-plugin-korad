@@ -1,4 +1,5 @@
-use super::ControlSettings;
+pub use super::ControlSettings;
+
 use crate::common::driver::KoradDriver;
 use async_trait::async_trait;
 use panduza_platform_core::connector::serial::eol::Driver as SerialEolDriver;
@@ -125,7 +126,8 @@ impl DriverOperations for Device {
 
         //
         //
-        crate::common::control::mount(instance.clone(), driver.clone()).await?;
+        crate::common::control::mount(instance.clone(), driver.clone(), control_settings.clone())
+            .await?;
 
         //
         //
