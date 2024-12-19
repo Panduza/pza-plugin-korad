@@ -22,9 +22,6 @@ static DEVICE_SERIAL_BAUDRATE: u32 = 9600; // We do not care... it is USB serial
 ///
 pub struct KA3005PDevice {
     ///
-    /// Device logger
-    logger: Option<Logger>,
-    ///
     /// Serial settings to connect to the pico
     serial_settings: Option<SerialSettings>,
 }
@@ -35,7 +32,6 @@ impl KA3005PDevice {
     ///
     pub fn new() -> Self {
         KA3005PDevice {
-            logger: None,
             serial_settings: None,
         }
     }
