@@ -1,4 +1,3 @@
-import time
 import logging
 from panduza import Reactor
 
@@ -15,20 +14,22 @@ r = Reactor()
 r.start()
 print("connection ok")
 
+voltage_control = r.attribute_from_name("voltage")
 
-pp = r.attribute_from_name("voltage")
+print("min ----", )
+print("max ----", )
 
-
-
-
-
-print("min ----", pp.min())
-print("max ----", pp.max())
-
-pp.set(4)
+# 
+step = 1
+if voltage_control.decimals() != 0:
+    step = 1 / (10 ** voltage_control.decimals())
 
 
+i = voltage_control.min()
+while i <= voltage_control.max():
+    print(f"set voltage to {i}{voltage_control.unit()}")
+    i += step
+    voltage_control.set(i)
 
 
-time.sleep(2)
 
