@@ -40,4 +40,4 @@ while i <= voltage_control.max():
     voltage_control.set(i)
 
 
-
+voltage_control.set(25)
