@@ -1,3 +1,4 @@
+import time
 import logging
 from panduza import Reactor
 
@@ -14,10 +15,17 @@ r = Reactor()
 r.start()
 print("connection ok")
 
+
+output_enable_control = r.attribute_from_name("output_enable")
 voltage_control = r.attribute_from_name("voltage")
 
 print("min ----", )
 print("max ----", )
+
+output_enable_control.set(True)
+time.sleep(1)
+output_enable_control.set(False)
+time.sleep(1)
 
 # 
 step = 1
