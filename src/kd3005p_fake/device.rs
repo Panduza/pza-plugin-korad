@@ -1,6 +1,9 @@
-use crate::common::{driver::KoradDriver, fake::Driver as SerialFakeDriver};
+use crate::{
+    common::{driver::KoradDriver, fake::Driver as SerialFakeDriver},
+    ControlSettings,
+};
 use async_trait::async_trait;
-use panduza_platform_core::{DriverOperations, Error, Instance};
+use panduza_platform_core::{log_info, DriverOperations, Error, Instance};
 use std::{sync::Arc, time::Duration};
 use tokio::{sync::Mutex, time::sleep};
 
@@ -30,6 +33,26 @@ impl KD3005PFakeDevice {
 
         Ok(Arc::new(Mutex::new(kdriver)))
     }
+
+    ///
+    ///
+    pub async fn prepare_control_settings(
+        &mut self,
+        instance: Instance,
+    ) -> Result<ControlSettings, Error> {
+        //
+        //
+        let instance_settings = instance.settings().await;
+
+        //
+        //
+        let mut control_settings = ControlSettings::new();
+        control_settings.override_with_instance_settings(&instance_settings)?;
+
+        //
+        //
+        Ok(control_settings)
+    }
 }
 
 #[async_trait]
@@ -38,15 +61,21 @@ impl DriverOperations for KD3005PFakeDevice {
     ///
     ///
     async fn mount(&mut self, instance: Instance) -> Result<(), Error> {
+        let logger = instance.logger.clone();
+
         let driver = self.mount_driver(instance.clone())?;
 
-        // instance.settings()
+        //
+        //
+        let control_settings = self.prepare_control_settings(instance.clone()).await?;
+        log_info!(logger, "control_settings = {:?}", control_settings);
 
         //
         // Identity
         panduza_platform_core::std::attribute::idn::mount(instance.clone(), driver.clone()).await?;
 
-        crate::common::control::mount(instance.clone(), driver.clone()).await?;
+        crate::common::control::mount(instance.clone(), driver.clone(), control_settings.clone())
+            .await?;
         crate::common::measure::mount(instance.clone(), driver.clone()).await?;
 
         Ok(())

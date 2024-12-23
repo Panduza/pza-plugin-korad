@@ -1,10 +1,12 @@
+pub use super::ControlSettings;
+
 mod current;
 mod options;
 mod voltage;
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::{
-    protocol::AsciiCmdRespProtocol, spawn_on_command, BooleanAttServer, Container, Error, Instance,
-    Logger,
+    log_debug_mount_end, log_debug_mount_start, protocol::AsciiCmdRespProtocol, spawn_on_command,
+    BooleanAttServer, Container, Error, Instance, Logger,
 };
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -15,18 +17,28 @@ use tokio::sync::Mutex;
 pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
     mut instance: Instance,
     driver: Arc<Mutex<KoradDriver<SD>>>,
+    control_settings: ControlSettings,
 ) -> Result<(), Error> {
-    //
-    // Start logging
-    let logger = instance.logger.clone();
-    logger.info("Mounting 'control' class...");
-
     //
     // Create attribute
     let mut itf_control = instance.create_class("control").finish().await;
+    let logger = itf_control.logger().clone();
+    log_debug_mount_start!(logger);
 
-    current::mount(instance.clone(), itf_control.clone(), driver.clone()).await?;
-    voltage::mount(instance.clone(), itf_control.clone(), driver.clone()).await?;
+    current::mount(
+        instance.clone(),
+        itf_control.clone(),
+        driver.clone(),
+        control_settings.clone(),
+    )
+    .await?;
+    voltage::mount(
+        instance.clone(),
+        itf_control.clone(),
+        driver.clone(),
+        control_settings.clone(),
+    )
+    .await?;
     options::mount(instance.clone(), itf_control.clone(), driver.clone()).await?;
 
     //
@@ -53,7 +65,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
 
     //
     // End of mount
-    logger.info("Mounting 'control' class -> OK");
+    log_debug_mount_end!(logger);
     Ok(())
 }
 
