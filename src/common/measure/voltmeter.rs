@@ -24,7 +24,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
         .create_attribute("value")
         .with_ro()
         .with_info(r#"Hold values returned from the ampermeter"#)
-        .finish_as_si("V", 0, 30, 2)
+        .finish_as_si("V", 0.0, 30.0, 2)
         .await?;
 
     //

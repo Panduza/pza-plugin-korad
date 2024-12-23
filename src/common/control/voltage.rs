@@ -9,7 +9,6 @@ use tokio::sync::Mutex;
 
 use super::ControlSettings;
 
-///
 /// control/voltage
 ///
 pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
@@ -26,8 +25,8 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
         .with_info(r#"Allow to read & write the voltage limit value of the power supply"#)
         .finish_as_si(
             "V",
-            control_settings.min_voltage() as i32,
-            control_settings.max_voltage() as i32,
+            control_settings.min_voltage(),
+            control_settings.max_voltage(),
             2,
         )
         .await?;
