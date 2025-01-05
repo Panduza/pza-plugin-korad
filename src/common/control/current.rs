@@ -3,7 +3,7 @@ use panduza_platform_core::protocol::AsciiCmdRespProtocol;
 use panduza_platform_core::{
     log_debug_mount_end, log_debug_mount_start, log_info, Container, Error, SiAttServer,
 };
-use panduza_platform_core::{spawn_on_command, Class, Instance, Logger};
+use panduza_platform_core::{spawn_on_command, Class, Instance};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
