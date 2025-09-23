@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use panduza_platform_core::protocol::AsciiCmdRespProtocol;
+use panduza_platform_core::protocol::{AsciiCmdRespProtocol, BytesDialogProtocol};
 // use panduza_platform_core::template::attribute::idn::IdnReader;
 use panduza_platform_core::{log_trace, Error, Logger};
 use std::time::Instant;
@@ -45,7 +45,7 @@ pub struct KoradDriver<SD> {
 //     }
 // }
 
-impl<SD: AsciiCmdRespProtocol> KoradDriver<SD> {
+impl<SD: BytesDialogProtocol> KoradDriver<SD> {
     ///
     /// Create a new driver
     ///
@@ -66,8 +66,8 @@ impl<SD: AsciiCmdRespProtocol> KoradDriver<SD> {
 
         //
         // Perform request
-        let cmd = "*IDN?".to_string();
-        let response = self.driver.ask(&cmd).await?;
+        let cmd = bytes::Bytes::from("*IDN?");
+        let response = self.driver.ask(cmd).await?;
 
         //
         // Log
