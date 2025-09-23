@@ -1,8 +1,8 @@
 use crate::common::driver::KoradDriver;
-use panduza_platform_core::protocol::AsciiCmdRespProtocol;
+use panduza_platform_core::protocol::BytesDialogProtocol;
 use panduza_platform_core::Error;
 use panduza_platform_core::{
-    spawn_on_command, BidirMsgAtt, Device, Logger, EnumCodec, EnumSettings, Interface,
+    spawn_on_command, BidirMsgAtt, Device, EnumCodec, EnumSettings, Interface, Logger,
 };
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -10,7 +10,7 @@ use tokio::sync::Mutex;
 ///
 ///
 ///
-pub async fn mount<SD: AsciiCmdRespProtocol>(
+pub async fn mount<SD: BytesDialogProtocol>(
     mut instance: Instance,
     mut interface: Interface,
     driver: Arc<Mutex<KoradDriver<SD>>>,

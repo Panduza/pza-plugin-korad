@@ -6,7 +6,7 @@ mod voltage;
 use crate::common::driver::KoradDriver;
 use futures::FutureExt;
 use panduza_platform_core::{
-    log_debug_mount_end, log_debug_mount_start, protocol::AsciiCmdRespProtocol, Container, Error,
+    log_debug_mount_end, log_debug_mount_start, protocol::BytesDialogProtocol, Container, Error,
     Instance, Logger,
 };
 use std::sync::Arc;
@@ -15,7 +15,7 @@ use tokio::sync::Mutex;
 ///
 ///
 ///
-pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
+pub async fn mount<SD: BytesDialogProtocol + 'static>(
     mut instance: Instance,
     driver: Arc<Mutex<KoradDriver<SD>>>,
     control_settings: ControlSettings,

@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use panduza_platform_core::protocol::{AsciiCmdRespProtocol, BytesDialogProtocol};
+use panduza_platform_core::protocol::BytesDialogProtocol;
 // use panduza_platform_core::template::attribute::idn::IdnReader;
 use panduza_platform_core::{log_trace, Error, Logger};
 use std::time::Instant;
@@ -18,7 +18,7 @@ pub struct KoradDriver<SD> {
 }
 
 // #[async_trait]
-// impl<SD: AsciiCmdRespProtocol> IdnReader for KoradDriver<SD> {
+// impl<SD: BytesDialogProtocol> IdnReader for KoradDriver<SD> {
 //     async fn read_idn(&mut self) -> Result<String, Error> {
 //         //
 //         // Measure perfs

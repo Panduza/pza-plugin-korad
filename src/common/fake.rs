@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use panduza_platform_core::{protocol::AsciiCmdRespProtocol, Error};
+use panduza_platform_core::{protocol::BytesDialogProtocol, Error};
 
 ///
 /// Fake Driver for power supply
@@ -23,7 +23,7 @@ impl Driver {
 }
 
 #[async_trait]
-impl AsciiCmdRespProtocol for Driver {
+impl BytesDialogProtocol for Driver {
     ///
     ///
     ///

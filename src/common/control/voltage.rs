@@ -1,5 +1,5 @@
 use crate::common::driver::KoradDriver;
-use panduza_platform_core::protocol::AsciiCmdRespProtocol;
+use panduza_platform_core::protocol::BytesDialogProtocol;
 use panduza_platform_core::{
     log_debug_mount_end, log_debug_mount_start, log_info, Container, Error, Logger, SiAttServer,
 };
@@ -11,7 +11,7 @@ use super::ControlSettings;
 
 /// control/voltage
 ///
-pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
+pub async fn mount<SD: BytesDialogProtocol + 'static>(
     mut instance: Instance,
     mut class: Class,
     driver: Arc<Mutex<KoradDriver<SD>>>,
@@ -66,7 +66,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
 ///
 /// control/voltage => triggered when command is received
 ///
-async fn on_command<SD: AsciiCmdRespProtocol>(
+async fn on_command<SD: BytesDialogProtocol>(
     logger: Logger,
     mut att_server: SiAttServer,
     driver: Arc<Mutex<KoradDriver<SD>>>,
