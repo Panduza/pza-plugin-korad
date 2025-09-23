@@ -2,13 +2,12 @@ pub use super::ControlSettings;
 
 use crate::common::driver::KoradDriver;
 use async_trait::async_trait;
-use panduza_platform_core::connector::serial::eol::Driver as SerialEolDriver;
-use panduza_platform_core::connector::serial::Settings as SerialSettings;
-use panduza_platform_core::connector::usb::Settings as UsbSettings;
+use panduza_platform_core::interface::serial::SerialEolInterface;
+use panduza_platform_core::interface::serial::SerialSettings;
+// use panduza_platform_core::interface::serial::Settings as SerialSettings;
+use panduza_platform_core::interface::usb::UsbSettings;
 use panduza_platform_core::Instance;
-use panduza_platform_core::{
-    log_info, log_info_mount_end, log_info_mount_start, DriverOperations, Error,
-};
+use panduza_platform_core::{log_info, log_info_mount_end, log_info_mount_start, Actions, Error};
 use serde_json::json;
 use std::sync::Arc;
 use std::time::Duration;
@@ -38,7 +37,7 @@ impl Device {
         instance: Instance,
     ) -> Result<SerialSettings, Error> {
         // Get the device logger
-        let logger = instance.logger.clone();
+        let logger = instance.logger().clone();
 
         // Get the device settings
         let json_settings = instance.settings().await.or(Some(json!({}))).unwrap();
@@ -48,8 +47,8 @@ impl Device {
 
         // Usb settings
         let usb_settings = UsbSettings::new()
-            .set_vendor(DEVICE_VENDOR_ID)
-            .set_model(DEVICE_PRODUCT_ID)
+            .set_vid(DEVICE_VENDOR_ID)
+            .set_pid(DEVICE_PRODUCT_ID)
             .optional_set_serial_from_json_settings(&json_settings);
         logger.info(format!("USB settings: {}", usb_settings));
 
@@ -96,14 +95,14 @@ impl Device {
 }
 
 #[async_trait]
-impl DriverOperations for Device {
+impl Actions for Device {
     ///
     ///
     ///
     async fn mount(&mut self, instance: Instance) -> Result<(), Error> {
         //
         //
-        let logger = instance.logger.clone();
+        let logger = instance.logger().clone();
         log_info_mount_start!(logger);
 
         //
@@ -122,7 +121,8 @@ impl DriverOperations for Device {
 
         //
         // Identity
-        panduza_platform_core::std::attribute::idn::mount(instance.clone(), driver.clone()).await?;
+        // panduza_platform_core::template::attribute::idn::mount(instance.clone(), driver.clone())
+        //     .await?;
 
         //
         //

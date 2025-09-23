@@ -1,6 +1,6 @@
 pub mod device;
 
-use panduza_platform_core::{DriverOperations, Producer};
+use panduza_platform_core::{Actions, Producer};
 
 pub use super::common::settings::Settings as ControlSettings;
 
@@ -33,7 +33,7 @@ impl Producer for Package {
 
         //
         //
-        let min_max_voltage = panduza_platform_core::std::prop::min_max::Settings::new(
+        let min_max_voltage = panduza_platform_core::template::prop::min_max::Settings::new(
             "voltage",
             "voltage limit",
             0,
@@ -44,7 +44,7 @@ impl Producer for Package {
 
         //
         //
-        let min_max_voltage = panduza_platform_core::std::prop::min_max::Settings::new(
+        let min_max_voltage = panduza_platform_core::template::prop::min_max::Settings::new(
             "current",
             "current limit",
             0,
@@ -58,7 +58,7 @@ impl Producer for Package {
         props
     }
 
-    fn produce(&self) -> Result<Box<dyn DriverOperations>, panduza_platform_core::Error> {
+    fn produce(&self) -> Result<Box<dyn Actions>, panduza_platform_core::Error> {
         return Ok(Box::new(device::Device::new()));
     }
 }
