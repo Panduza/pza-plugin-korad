@@ -26,7 +26,7 @@ pub async fn mount<SD: BytesDialogProtocol + 'static>(
         .with_info(r#"Allow to read & write the voltage limit value of the power supply"#)
         .start_as_number()
         .await?;
-    let logger = att_server.logger();
+    let logger = att_server.logger().clone();
     log_debug_mount_start!(logger);
 
     //
@@ -46,19 +46,22 @@ pub async fn mount<SD: BytesDialogProtocol + 'static>(
     // Execute action on each command received
     let logger_2 = logger.clone();
     let att_server_2 = att_server.clone();
-    att_server.add_callback(move |command| {
-        let att_server_2 = att_server_2.clone();
+    att_server
+        .add_callback(move |command| {
+            let logger_2 = logger_2.clone();
+            let att_server_2 = att_server_2.clone();
 
-        let value = driver.clone();
-        async move {
-            log_info!(logger, "command received '{:?}'", v);
-            value.lock().await.set_vset(v).await.unwrap();
-            att_server_2.set(v).await.unwrap();
-            let real_value = driver.lock().await.get_vset().await.unwrap();
-            att_server_2.set(real_value).await.unwrap();
-        }
-        .boxed()
-    });
+            let value = driver.clone();
+            async move {
+                log_info!(logger_2, "command received '{:?}'", v);
+                value.lock().await.set_vset(v).await.unwrap();
+                att_server_2.set(v).await.unwrap();
+                let real_value = value.lock().await.get_vset().await.unwrap();
+                att_server_2.set(real_value).await.unwrap();
+            }
+            .boxed()
+        })
+        .await;
 
     //
     // End of mount

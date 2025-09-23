@@ -57,18 +57,20 @@ pub async fn mount<SD: BytesDialogProtocol + 'static>(
     // Execute action on each command received
     let logger_2 = instance.logger().clone();
     let att_oe_2 = att_oe.clone();
-    att_oe.add_callback({
-        move |command| {
-            let att_boolean_alert = att_oe_2.clone();
-            async move {
-                // log_info!(att_boolean_alert.logger(), "Alert simulation triggered");
-                att_boolean_alert
-                    .trigger_alert("Simulated alert triggered for testing purposes")
-                    .await;
+    att_oe
+        .add_callback({
+            move |command| {
+                let att_boolean_alert = att_oe_2.clone();
+                async move {
+                    // log_info!(att_boolean_alert.logger(), "Alert simulation triggered");
+                    att_boolean_alert
+                        .trigger_alert("Simulated alert triggered for testing purposes")
+                        .await;
+                }
+                .boxed()
             }
-            .boxed()
-        }
-    });
+        })
+        .await;
 
     //
     // End of mount
