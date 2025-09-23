@@ -67,9 +67,9 @@ impl Device {
         &mut self,
         instance: Instance,
         serial_settings: SerialSettings,
-    ) -> Result<Arc<Mutex<KoradDriver<SerialEolDriver>>>, Error> {
-        let driver = SerialEolDriver::open(&serial_settings, vec![b'\n'])?;
-        let kdriver = KoradDriver::new(driver, instance.logger.clone());
+    ) -> Result<Arc<Mutex<KoradDriver<SerialEolInterface>>>, Error> {
+        let driver = SerialEolInterface::open(&serial_settings, vec![b'\n'])?;
+        let kdriver = KoradDriver::new(driver, instance.logger().clone());
         Ok(Arc::new(Mutex::new(kdriver)))
     }
 

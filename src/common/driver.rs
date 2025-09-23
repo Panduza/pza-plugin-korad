@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 use panduza_platform_core::protocol::AsciiCmdRespProtocol;
-use panduza_platform_core::std::attribute::idn::IdnReader;
+// use panduza_platform_core::template::attribute::idn::IdnReader;
 use panduza_platform_core::{log_trace, Error, Logger};
 use std::time::Instant;
 
@@ -17,33 +17,33 @@ pub struct KoradDriver<SD> {
     logger: Logger,
 }
 
-#[async_trait]
-impl<SD: AsciiCmdRespProtocol> IdnReader for KoradDriver<SD> {
-    async fn read_idn(&mut self) -> Result<String, Error> {
-        //
-        // Measure perfs
-        let start = Instant::now();
+// #[async_trait]
+// impl<SD: AsciiCmdRespProtocol> IdnReader for KoradDriver<SD> {
+//     async fn read_idn(&mut self) -> Result<String, Error> {
+//         //
+//         // Measure perfs
+//         let start = Instant::now();
 
-        //
-        // Perform request
-        let cmd = "*IDN?".to_string();
-        let response = self.driver.ask(&cmd).await?;
+//         //
+//         // Perform request
+//         let cmd = "*IDN?".to_string();
+//         let response = self.driver.ask(&cmd).await?;
 
-        //
-        // Log
-        log_trace!(
-            self.logger,
-            "ASK <=> {:?} - {:?} - {:.2?}",
-            cmd,
-            response,
-            start.elapsed()
-        );
+//         //
+//         // Log
+//         log_trace!(
+//             self.logger,
+//             "ASK <=> {:?} - {:?} - {:.2?}",
+//             cmd,
+//             response,
+//             start.elapsed()
+//         );
 
-        //
-        // End
-        Ok(response)
-    }
-}
+//         //
+//         // End
+//         Ok(response)
+//     }
+// }
 
 impl<SD: AsciiCmdRespProtocol> KoradDriver<SD> {
     ///

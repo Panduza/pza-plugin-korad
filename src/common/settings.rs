@@ -1,4 +1,4 @@
-use panduza_platform_core::std::prop::min_max::Settings as MinMaxSettings;
+use panduza_platform_core::template::prop::min_max::Settings as MinMaxSettings;
 use panduza_platform_core::{Error, InstanceSettings};
 
 ///

@@ -5,8 +5,8 @@ mod options;
 mod voltage;
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::{
-    log_debug_mount_end, log_debug_mount_start, protocol::AsciiCmdRespProtocol, spawn_on_command,
-    BooleanAttServer, Container, Error, Instance, Logger,
+    log_debug_mount_end, log_debug_mount_start, protocol::AsciiCmdRespProtocol, Container, Error,
+    Instance, Logger,
 };
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -46,7 +46,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
     let att_oe = itf_control
         .create_attribute("output_enable")
         .with_rw()
-        .finish_as_boolean()
+        .start_as_boolean()
         .await?;
 
     let v = driver.lock().await.get_out().await?;
@@ -54,7 +54,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol + 'static>(
 
     //
     // Execute action on each command received
-    let logger_2 = instance.logger.clone();
+    let logger_2 = instance.logger().clone();
     let att_oe_2 = att_oe.clone();
     spawn_on_command!(
         "on_command => control",

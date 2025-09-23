@@ -13,9 +13,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol>(
 ) -> Result<(), Error> {
     //
     // Create the local logger
-    let logger = instance
-        .logger
-        .new_for_attribute(Some("".to_string()), "identity");
+    let logger = instance.logger().clone();
     log_debug!(logger, "Mounting...");
 
     //
@@ -24,7 +22,7 @@ pub async fn mount<SD: AsciiCmdRespProtocol>(
         .create_attribute("identity")
         .with_ro()
         .with_info("Identity string of the power supply")
-        .finish_as_string()
+        .start_as_string()
         .await?;
 
     //
