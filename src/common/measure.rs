@@ -1,5 +1,5 @@
-mod ampermeter;
-mod voltmeter;
+// mod ampermeter;
+// mod voltmeter;
 
 use crate::common::driver::KoradDriver;
 use panduza_platform_core::{protocol::BytesDialogProtocol, Container, Error, Instance};
@@ -17,8 +17,8 @@ pub async fn mount<SD: BytesDialogProtocol + 'static>(
     // Create attribute
     let itf_measure = instance.create_class("measure").finish().await;
 
-    ampermeter::mount(instance.clone(), itf_measure.clone(), driver.clone()).await?;
-    voltmeter::mount(instance.clone(), itf_measure.clone(), driver.clone()).await?;
+    // ampermeter::mount(instance.clone(), itf_measure.clone(), driver.clone()).await?;
+    // voltmeter::mount(instance.clone(), itf_measure.clone(), driver.clone()).await?;
 
     Ok(())
 }

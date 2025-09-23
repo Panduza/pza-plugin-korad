@@ -1,7 +1,7 @@
 pub use super::ControlSettings;
 
-mod current;
-mod options;
+// mod current;
+// mod options;
 mod voltage;
 use crate::common::driver::KoradDriver;
 use futures::FutureExt;
@@ -26,13 +26,13 @@ pub async fn mount<SD: BytesDialogProtocol + 'static>(
     let logger = itf_control.logger().clone();
     log_debug_mount_start!(logger);
 
-    current::mount(
-        instance.clone(),
-        itf_control.clone(),
-        driver.clone(),
-        control_settings.clone(),
-    )
-    .await?;
+    // current::mount(
+    //     instance.clone(),
+    //     itf_control.clone(),
+    //     driver.clone(),
+    //     control_settings.clone(),
+    // )
+    // .await?;
     voltage::mount(
         instance.clone(),
         itf_control.clone(),
@@ -40,7 +40,7 @@ pub async fn mount<SD: BytesDialogProtocol + 'static>(
         control_settings.clone(),
     )
     .await?;
-    options::mount(instance.clone(), itf_control.clone(), driver.clone()).await?;
+    // options::mount(instance.clone(), itf_control.clone(), driver.clone()).await?;
 
     //
     //
