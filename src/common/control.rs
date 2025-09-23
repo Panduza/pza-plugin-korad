@@ -35,7 +35,7 @@ pub async fn mount<SD: BytesDialogProtocol + 'static>(
     // .await?;
     voltage::mount(
         instance.clone(),
-        itf_control.clone(),
+        &mut itf_control.clone(),
         driver.clone(),
         control_settings.clone(),
     )
@@ -57,7 +57,7 @@ pub async fn mount<SD: BytesDialogProtocol + 'static>(
     // Execute action on each command received
     let logger_2 = instance.logger().clone();
     let att_oe_2 = att_oe.clone();
-    att_oe_2.add_callback({
+    att_oe.add_callback({
         move |command| {
             let att_boolean_alert = att_oe_2.clone();
             async move {
